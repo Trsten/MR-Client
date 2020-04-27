@@ -1,0 +1,445 @@
+/*!
+ =========================================================
+ * EAP
+ =========================================================
+ */
+
+ .work-content {
+    color: black;
+    padding-top: 10px;
+    /* padding: 10px; */
+}
+
+html, body, #root, .wrapper {
+   height: 100%;
+}
+
+.green-text {
+   color: green;
+}
+
+.danger-text {
+   color: red;
+}
+
+.no-pointer {
+   cursor: default;
+}
+
+.pointer { 
+   cursor: pointer; 
+}
+
+.work-content {
+   min-height: calc(100% - 56.4px);
+}
+
+.sidebar-eap {
+   max-height: 100%;
+   height: 100%;
+   position: fixed;
+   width: 190px;
+   background: #9da6af;
+   padding-top: 10px;
+   box-shadow: 0 16px 22px -12px rgba(0,0,0,.56), 0 4px 25px 0 rgba(0,0,0,.12), 0 8px 10px -5px rgba(0,0,0,.2);
+}
+
+.sidebar-eap a {
+    color: white;
+    height: 45px;
+    margin: 2px;
+}
+
+.main-panel {
+   height: 100%;
+   max-height: 100%;
+   position: relative;
+   float: right;
+   width: calc(100% - 190px);
+}
+
+.sidebar-eap a .material-icons {
+   display: inline-block;
+   float: left;
+   margin-right: 8px;
+}
+
+.sidebar-eap a p {
+   /* margin-left: 50px; */
+   position: relative;
+}
+
+.calendar-content {
+   padding: 10px;
+}
+
+.dashboardText {
+   color: red;
+}
+
+.ReactTable .rt-thead {
+   background-color: #9da6af94;
+}
+
+.ReactTable .rt-thead.-header {
+   box-shadow: none;
+}
+
+.ReactTable .pagination-bottom {
+   background-color: #9da6af5e !important;
+}
+
+.ReactTable .-pagination {
+   border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.ReactTable .rt-tbody .rt-tr-group {
+   border-bottom: 1px solid rgba(0,0,0,0.13);
+   background-color: #504e4b;
+}
+
+
+.react-bs-container-body{
+   overflow: inherit !important;
+}
+
+/* .tableHeader {
+   background-color: #9da6af94;
+   /* box-shadow: 0 2px 15px 0 rgba(0,0,0,0.15); 
+} */
+
+.custom-dropddown .dropdown-menu {
+   right: -5px;
+   left: auto !important;
+   transform: none !important;
+   box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+   top: 100% !important;
+}
+
+.custom-dropddown .list-unstyled {
+   margin-bottom: 5px;
+}
+
+.custom-dropddown .dropdown-item:hover {
+   background-color: #6c757d;
+   color: white;
+}
+
+.custom-dropddown .material-icons {
+   color: #6c757d;
+}
+
+.menu-cell {
+   overflow: initial !important;
+} 
+
+.hidden {
+   display: none !important;
+}
+
+.openedItemDetail {
+   display: block;
+}
+
+.headerContent {
+   height: 31.6px;
+   background-color: #9da6af94;
+}
+
+.itemDetailWrapper {
+   border: 1px solid #dee2e6;
+   height: 100%;
+   margin-top: 45px;
+}
+
+.itemDetailWrapper2 {
+   border: 1px solid #dee2e6;
+   /* height: calc(100% - 40px);
+   margin-top: 40px; */
+   height: 100%;
+}
+
+.headerContent h5{
+   padding-top: 4px;
+   padding-left: 8px;
+   display: inline-block;
+}
+
+.headerContent .material-icons {
+   display: inline-block;
+   float: right;
+   padding-top: 0px;
+   height: 100%;
+   padding-right: 0px;
+   margin-right: 4px;
+   margin-top: 4px;
+   cursor: pointer;
+}
+
+.workContent {
+   height: calc(100% - 49px);
+   margin: 10px;
+}
+
+input:read-only { 
+   background-color: #e3e6e8 !important;
+   cursor: no-drop;
+}
+
+.content-only {
+   padding: 0px 5px;
+}
+
+.content1 {
+   width: 50%;
+   display: inline-block;
+   padding: 0px 5px;
+   /* position: absolute; */
+}
+
+
+
+.content2 {
+   width: 50%;
+   padding: 0px 5px;
+   display: inline-block;
+   position: absolute;
+} 
+
+.contentCalendar {
+   width: 70%;
+   display: inline-block;
+   padding: 0px 5px;
+   /* position: absolute; */
+}
+
+.contentEvent {
+   width: 30%;
+   padding: 0px 5px;
+   display: inline-block;
+   position: absolute;
+} 
+
+.table-search {
+   margin-right: 5px;
+}
+
+.button-icon.pull-right {
+   margin-left: 5px;
+}
+
+.button-icon {
+   border-radius: 15% !important;
+}
+
+.content-toolbar .button-icon {
+   margin-top: 8px;
+   margin-left: 5px
+}
+
+.content-toolbar {
+   display: inline-block;
+    width: 100%;
+}
+
+.ReactTable .-pagination .-previous, .ReactTable .-pagination .-next {
+   flex: 0;
+}
+
+.ReactTable .rt-tbody .rt-tr-group:last-child {
+   border-bottom: 1px solid rgba(0,0,0,0.13);
+   border-bottom-width: 1px;
+   border-bottom-style: solid;
+   border-bottom-color: rgba(0, 0, 0, 0.13);
+}
+
+.MuiFormControl-marginDense, .MuiTextField-root {
+   margin-top: 10px !important;
+}
+
+.marg-rgt{
+   margin-right: 10px !important
+}
+
+.marg-rgt-dbl{
+   margin-right: 20px !important
+}
+
+.marg-top{
+   margin-top: 10px !important
+}
+
+.marg-top-dbl{
+   margin-top: 20px !important
+}
+
+.marg-btm{
+   margin-bottom: 10px !important
+}
+
+.marg-btm-dbl{
+   margin-bottom: 20px !important
+}
+
+.padd-rgt{
+   padding-right: 10px !important
+}
+
+.padd-rgt-dbl{
+   padding-right: 20px !important
+}
+
+.dlg-close-icon {
+   position: absolute !important;
+   padding: 5px !important;
+   right: 15px;
+}
+
+.filter-active {
+   background-image: none;
+   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.225);
+   background-color: #11a030;
+   border-color: #adadad; 
+}
+
+.normal-underline{
+   font-size:500%; 
+   text-decoration:underline;
+}
+
+input:-moz-read-only { /* For Firefox */
+   cursor: pointer !important;
+}
+
+.bg {
+   position: relative;
+   z-index: 1;
+}
+
+.bg::before{
+   height: 100vh;
+   content: "";
+   position: absolute;
+   z-index: -1;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   background: url("../background/EAPlogin.jpg") center ;
+   background-repeat: no-repeat;
+   background-size: cover;
+   opacity: .7;
+}
+
+.Dropzone {
+   height: 200px;
+   width: 200px;
+   background-color: #fff;
+   border: 2px dashed rgb(187, 186, 186);
+   border-radius: 50%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   font-size: 16px;
+ }
+ 
+ .Highlight {
+   background-color: #e3e3e3;
+ }
+ 
+ .ProgressBar {
+   margin-top: 2px ;
+   width: 100%;
+   height: 8px;
+   background-color:#e0e0e0;
+   border-radius: 5px;
+ }
+ 
+ .Progress {
+   background-color: #59df3d;
+   height: 100%;
+   margin: 0;
+   border-radius: 5px;
+ }
+
+
+ .Upload {
+   display: flex;
+   flex-direction: column;
+   flex: 1;
+   align-items: flex-start;
+   text-align: left;
+   overflow: hidden;
+   
+ }
+ 
+ .Content {
+   display: flex;
+   flex-direction: row;
+   padding-top: 16px;
+   box-sizing: border-box;
+   width: 100%;
+   margin-bottom: 30px;
+ }
+ 
+ .Files {
+   margin-left: 32px;
+   align-items: flex-start;
+   justify-items: flex-start;
+   flex: 1;
+   overflow-y: auto;
+ }
+ 
+ .Row {
+   display: flex;
+   flex: 1;
+   flex-direction: column;
+   justify-content: space-between;
+   height: 50px;
+   padding: 8px;
+   overflow: hidden;
+   box-sizing: border-box;
+ }
+ 
+ 
+ .ProgressWrapper {
+   display: flex;
+   flex: 1;
+   flex-direction: row;
+   align-items: center;
+ }
+
+ .photo-change {
+   background:#504e4b;
+   height: 40px;
+   width: 110px;
+   opacity: 0.4;
+   margin: 0 auto;
+   margin-bottom: -40px;
+   transform: translate(0,-128%);
+   border-radius: 50% / 100%;
+   border-top-right-radius: 0;
+   border-top-left-radius: 0;
+ }
+
+@media only screen and (max-width: 900px) {
+   /* .footer
+   .column
+   .social-column-container */
+   .content2 {
+       width: 100%;
+       display: inline-block;
+   }
+
+   .content1 {
+       display: none;
+   }
+   .contentCalendar{
+      display: none;
+   }
+   .contentEvent {
+      width: 100%;
+      display: inline-block;
+   }
+ }
