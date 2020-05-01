@@ -139,6 +139,7 @@ function Home({ isLogged, doLogout,listenClear, listenAttendantStatus,listenMeet
       case 3:
           return <Table filter="owned" title="Meetings where you are leader"/>; 
       case 4:
+          //TODO: vycistit meetingy
           doLogout();
           return <Redirect to="/"/>;
       default:
@@ -146,9 +147,9 @@ function Home({ isLogged, doLogout,listenClear, listenAttendantStatus,listenMeet
         } 
     }
 
-    if(!isLogged) {
-      return <Redirect to="/"/>;
-    }
+  // if(!isLogged) {
+  //   return <Redirect to="/"/>;
+  // }
 
   return (
     <div className={classes.root}>

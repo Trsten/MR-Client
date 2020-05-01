@@ -136,7 +136,7 @@ function Upload({ files, successfullUploaded, handleDelete,...props }) {
   return (
     <div className="Upload">
        <Dialog open={removeDialog.open} onClose={handleCloseRemoveDialog} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Remeve File !</DialogTitle>
+        <DialogTitle id="form-dialog-title">Remove File !</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Are you sure you want remove file {removeDialog.name} ?

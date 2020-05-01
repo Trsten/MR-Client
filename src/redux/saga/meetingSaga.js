@@ -23,25 +23,18 @@ function* handleDeleteMeeting(index) {
   delete index.index.files;
   const { result, error } = yield call(deleteMeetingAPI, index);
   if (result) {
-    console.log(index);
-    console.log(index.index.delChildrens);
     if (index.index.delChildrens) {
-      //odstranujem subory pre vsetky meetingy ktoré odstranujem
+      //odstranujem subory pre vsetky meetingy ktore sa opakuju
       while (result.data.length > 0 ) {
-        console.log(result.data);
-        console.log(result.data[0]);
         filesToDelete.entityId = result.data[0];
         filesToDelete.fileDataList = [];
-        console.log(filesToDelete);
         const response = yield call (getFilesInfo , filesToDelete);
         yield call(fileDelete, response.result.data);
         result.data.shift();
-      }
-      
+      }      
     } else {
       yield call(fileDelete ,filesToDelete);
     }
-    
     yield put(meetingSuccess("delete"));
     yield put(deleteMeeting(index.index));
   } else {
