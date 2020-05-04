@@ -62,14 +62,12 @@ function Table({listenClear, ...props}) {
     useEffect(() => {
       setShowItemDetail(false);
 
-      var date = new Date();     
-      var startDateJson = JSON.stringify(date);  
-      setSelectedStartDate(new Date().setHours(0,0,0));
+      var startDate = new Date(); 
+      startDate.setHours(0,0,0,0);    
+      var startDateJson = JSON.stringify(startDate);
       
-      date.setDate(date.getDate() + 14);
-
-      setSelectedEndDate(new Date(getDate()));
-      var endDateJson = JSON.stringify(date);
+      let endDate = getDate();
+      var endDateJson = JSON.stringify(endDate);
 
       var owner = props.filter === "owned" ? true : false;
       var attendant = false;
@@ -89,6 +87,8 @@ function Table({listenClear, ...props}) {
       tableFilter.attendant = attendant;
       tableFilter.owner = owner;
 
+      console.log(tableFilter);
+
       props.listenGetFilteredMeetings(tableFilter);
       },[props.filter]);
       
@@ -103,10 +103,17 @@ function Table({listenClear, ...props}) {
       const getDate = () => {        
       var tempDate = new Date();
       tempDate.setDate(tempDate.getDate() + 14);
-      return tempDate.setHours(23,59,59);
+      tempDate.setHours(23,59,59);
+      return tempDate;
       }
 
-      const [selectedStartDate, setSelectedStartDate] = useState(new Date().setHours(0,0,0));
+      const getDateZero = () => {
+        var tempDate = new Date();
+        tempDate.setHours(0,0,0);
+        return tempDate;
+      }
+
+      const [selectedStartDate, setSelectedStartDate] = useState(getDateZero());
       const [selectedEndDate, setSelectedEndDate] = useState(new Date(getDate()));
 
       const handleStartDateChange = date => {
@@ -126,10 +133,6 @@ function Table({listenClear, ...props}) {
         return(new Date(dateStr)) ;
       }
 
-      const openListOFInvited = (id) => {
-        setShowItemDetail({id: id, show: true})
-      }
-
         const [meetingStateFilter, setMeetingStateFilter] = useState();
         const [attendantStateFilter, setAttendantStateFilter] = useState({open: false, value: ''});
         const [meetingScheduleFilter,setMeetingScheduleFilter] = useState();
@@ -137,10 +140,6 @@ function Table({listenClear, ...props}) {
 
         const handleMeetingScheduleChange = event => {
           setMeetingScheduleFilter(event.target.value);
-        };
-
-        const handleAttendantStateChange = event => {
-          setAttendantStateFilter({...attendantStateFilter,value: event.target.value});
         };
 
         const handleMeetingStateChange = event => {
@@ -153,17 +152,6 @@ function Table({listenClear, ...props}) {
             statuses.push({
               value: props.meetingSchedule[i].id,
               label: props.meetingSchedule[i].recurrenceType
-            })
-          }
-          return statuses;
-        }
-
-        const getAttendantStatuses = () => {
-          var statuses = [];
-          for(var i = 0 ; i < props.attendantStatus.length ; i++) {
-            statuses.push({
-              value: props.attendantStatus[i].id,
-              label: props.attendantStatus[i].status
             })
           }
           return statuses;
@@ -211,16 +199,6 @@ function Table({listenClear, ...props}) {
           }
         } 
         return '';
-      }
-      
-      const findAttendantStateId = (index) => {
-        if (props.attendantStatus) {
-          let local = props.attendantStatus.find( ({ id }) => id === index );
-          if (local) {
-            return local.status;
-          }
-          return '';
-        }
       }
 
     if ( props.success === "update"  && !props.loading ) {
@@ -313,14 +291,22 @@ function Table({listenClear, ...props}) {
       setMeetingStateFilter();
       setAttendantStateFilter({...attendantStateFilter,value: undefined});
       setMeetingScheduleFilter();
-      setSelectedStartDate(new Date().setHours(0,0,0));
+      let deteZero = new Date();
+      deteZero.setHours(0,0,0,0);
+      setSelectedStartDate(deteZero);
       setSelectedEndDate(new Date(getDate())); 
     };
 
     const handleCloseApply= () => {
+
+      console.log(selectedEndDate);
+      console.log(selectedStartDate);
+
+
       setShowFilterDlg(false);
-      tableFilter.startDate = selectedStartDate.toJSON();
       tableFilter.endDate = selectedEndDate.toJSON();
+      tableFilter.startDate = selectedStartDate.toJSON();
+
       if (meetingStateFilter  !== "") {
         tableFilter.meetingStatusId = meetingStateFilter;
       }
