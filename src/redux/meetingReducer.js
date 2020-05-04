@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { MEETING_FAILURE,MEETING_LOADING, ADD_MEETING, GET_MEETINGS, GET_MEETING,
-     DELETE_MEETING, GET_FILTERED_MEETINGS, MEETING_SUCCESS, UPDATE_MEETING, UPDATE_FAMILY } from './saga/meetingActions';
+     DELETE_MEETING, GET_FILTERED_MEETINGS, MEETING_SUCCESS, UPDATE_MEETING, UPDATE_FAMILY,CLEAR_MEETINGS } from './saga/meetingActions';
 
 const INITIAL_STATE = [];
 
@@ -44,6 +44,8 @@ function meetingOperation(state = INITIAL_STATE, action) {
         }
         case GET_FILTERED_MEETINGS:
             return action.meetings;
+        case CLEAR_MEETINGS:
+            return [];
         default:
             return state;
     }

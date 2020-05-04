@@ -13,6 +13,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Toolbar from '@material-ui/core/Toolbar';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
 import IconButton from "@material-ui/core/IconButton";
 import FilterListIcon from '@material-ui/icons/FilterList';
@@ -58,12 +60,11 @@ function Table({listenClear, ...props}) {
   const classes = useStyles();
     
     useEffect(() => {
-      //TODO: treba update planovaný -> skoncený
       setShowItemDetail(false);
 
       var date = new Date();     
       var startDateJson = JSON.stringify(date);  
-      setSelectedStartDate(new Date());
+      setSelectedStartDate(new Date().setHours(0,0,0));
       
       date.setDate(date.getDate() + 14);
 
@@ -101,10 +102,11 @@ function Table({listenClear, ...props}) {
 
       const getDate = () => {        
       var tempDate = new Date();
-      return tempDate.setDate(tempDate.getDate() + 14);
+      tempDate.setDate(tempDate.getDate() + 14);
+      return tempDate.setHours(23,59,59);
       }
 
-      const [selectedStartDate, setSelectedStartDate] = useState(new Date());
+      const [selectedStartDate, setSelectedStartDate] = useState(new Date().setHours(0,0,0));
       const [selectedEndDate, setSelectedEndDate] = useState(new Date(getDate()));
 
       const handleStartDateChange = date => {
@@ -119,24 +121,14 @@ function Table({listenClear, ...props}) {
         setShowItemDetail({open: false});
       }
 
-      //konvertujem UTC date na local date
       const editDate = (date) => {
         var dateStr = date.substring(0, date.length - 5);                 
         return(new Date(dateStr)) ;
       }
-    
-      //nezobrazujem pozvanky ak je vlastnikom meetingu
-      const removeInvitations = (meeting) => {
-          if (meeting.userId === props.loggedUser.id) {
-            return ""; 
-          } else {
-            for (var i = 0; i < meeting.attendants.length; i++) {
-              if(meeting.attendants[i].userId === props.loggedUser.id) {
-                return findAttendantStateId(meeting.attendants[i].attendantStatusId);
-              }
-            }
-          }
-        };
+
+      const openListOFInvited = (id) => {
+        setShowItemDetail({id: id, show: true})
+      }
 
         const [meetingStateFilter, setMeetingStateFilter] = useState();
         const [attendantStateFilter, setAttendantStateFilter] = useState({open: false, value: ''});
@@ -287,15 +279,6 @@ function Table({listenClear, ...props}) {
         return (<div>{findMeeingScheduleId(props.original.meetingScheduleId)}</div>)}
     },
     {
-      Header: "Invitation",
-      accessor: "meetingStatusId",
-      style: {
-        textAlign: "center"
-      },
-      Cell: props => {
-        return (<div>{removeInvitations(props.original)}</div>)}
-  },
-    {
       style: {
         textAlign: "center"
       },
@@ -330,7 +313,7 @@ function Table({listenClear, ...props}) {
       setMeetingStateFilter();
       setAttendantStateFilter({...attendantStateFilter,value: undefined});
       setMeetingScheduleFilter();
-      setSelectedStartDate(new Date());
+      setSelectedStartDate(new Date().setHours(0,0,0));
       setSelectedEndDate(new Date(getDate())); 
     };
 
@@ -351,27 +334,6 @@ function Table({listenClear, ...props}) {
       props.listenGetFilteredMeetings(tableFilter);
       listenClear();
     };
-
-    const handleShowFilterAttendant = () => {
-      if (attendantStateFilter.open) {
-        return (<TextField
-          id="standard-attendant-currency"
-          select
-          label="attendant status"
-          value={attendantStateFilter.value}
-          onChange={handleAttendantStateChange}
-          helperText="Please select attendant status"
-        >
-          {getAttendantStatuses().map(option => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>);
-      } else {
-        return;
-      }
-    }
 
     const handleChangeDataShowItemDetail = (data) => {
       setShowItemDetail({
@@ -506,9 +468,6 @@ function Table({listenClear, ...props}) {
           ))}
         </TextField>
          </div>
-           <div>
-           {handleShowFilterAttendant()}
-           </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">

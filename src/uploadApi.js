@@ -10,11 +10,6 @@ const FILE_DELETE_TMP_FOLDER_URL = FILE_URL + "/delete/";
 const FILE_DOWNLOAD_URL = FILE_URL + "/download";
 const FILE_INFO_URL = FILE_URL + "/info";
 
-// const fileMove = (file) =>
-//     axios.post(FILE_MOVE_URL)
-//         .then(result => ({ result }))
-//         .catch(error => handleError(error))
-
 const fileDelete = (formData) =>
     axios.post(FILE_DELETE_URL, formData)
         .then(result => ({ result }))
@@ -34,13 +29,30 @@ const fileDownload = (formData, config) =>
     axios.post(FILE_DOWNLOAD_URL, formData, config)
         .then(result => {
             const file = JSON.parse(result.config.data).fileDataList[0];
-            const url = window.URL.createObjectURL(new Blob([result.data]));
-            console.log(url);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = file.name; 
-            document.body.appendChild(link);
-            link.click();
+
+            let suffix = file.name.substring(file.name.indexOf('.') + 1,file.name.length)
+            if ( suffix === 'pdf' ) {
+                //open new tab with PDF
+                const file2 = new Blob(
+                    [result.data], 
+                    {type: 'application/pdf'});
+                const fileURL = URL.createObjectURL(file2);
+                window.open(fileURL);
+            } else {
+                //download
+                
+                const url = window.URL.createObjectURL(new Blob([result.data]));
+                console.log(url);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = file.name; 
+                document.body.appendChild(link);
+                link.click();
+    
+            }
+            
+
+            
         })
         .catch(error => console.log(error))
 

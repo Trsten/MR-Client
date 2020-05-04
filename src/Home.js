@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { doLogout } from './redux/saga/loginActions';
+import { clearMeetings } from './redux/saga/meetingActions';
 import { connect } from 'react-redux';
 import CreateForm from './components/CreateForm';
 
@@ -28,6 +29,13 @@ import HomeIcon from '@material-ui/icons/Home';
 import SendIcon from '@material-ui/icons/Send';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import EventSeatIcon from '@material-ui/icons/EventSeat';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
 
 import { listenMeetingStatus, listenAttendantStatus, listenMeetingSchedule, listenGetUsers } from './redux/saga/refDataActions';
 
@@ -94,7 +102,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Home({ isLogged, doLogout,listenClear, listenAttendantStatus,listenMeetingSchedule,listenMeetingStatus,listenGetUsers, loading, success }) {
+function Home({ doLogout,clearMeetings, loggedUser,listenAttendantStatus, listenMeetingSchedule,listenMeetingStatus,listenGetUsers }) {
 
   useEffect(() => { 
     listenAttendantStatus();
@@ -105,9 +113,27 @@ function Home({ isLogged, doLogout,listenClear, listenAttendantStatus,listenMeet
 
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const [openAlter, setOpenAlter] = useState({open: false, severity: '', msg: ''});
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [ userInfo, setUserInfo ] = useState(false);
+  const [ showPasw, setShowPasw ] = useState(false);
+
+  const showPasword = () => {
+    setShowPasw(true);
+  }
+
+  const hidePasword = () => {
+    setShowPasw(false);
+  }
+
+  const openUserInfo = () => {
+    setUserInfo(true);
+  }
+
+  const closeUserInfo = () => {
+    setUserInfo(false);
+  }
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -139,8 +165,8 @@ function Home({ isLogged, doLogout,listenClear, listenAttendantStatus,listenMeet
       case 3:
           return <Table filter="owned" title="Meetings where you are leader"/>; 
       case 4:
-          //TODO: vycistit meetingy
           doLogout();
+          clearMeetings();
           return <Redirect to="/"/>;
       default:
           return;
@@ -153,6 +179,25 @@ function Home({ isLogged, doLogout,listenClear, listenAttendantStatus,listenMeet
 
   return (
     <div className={classes.root}>
+        <Dialog open={userInfo} onClose={closeUserInfo} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">User Informations</DialogTitle>
+        <DialogContent>
+          <DialogContentText> fullname : {loggedUser.name}</DialogContentText>
+          <DialogContentText> email : {loggedUser.email}</DialogContentText>
+          <DialogContentText> password : { showPasw ?  loggedUser.password : 
+            ({ toString: () => '*', repeat: String.prototype.repeat }).repeat(loggedUser.password.length) }
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+        <Button  onMouseDown={showPasword} onMouseUp={hidePasword} color="primary">
+            Show password
+          </Button>
+          <Button onClick={closeUserInfo} color="primary">
+            Cancel
+          </Button>
+        </DialogActions>
+    </Dialog>
+
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -176,6 +221,7 @@ function Home({ isLogged, doLogout,listenClear, listenAttendantStatus,listenMeet
           <IconButton 
           color="inherit"
           className={classes.toolbarButtons}
+          onClick={openUserInfo}
           >
             <AccountCircleIcon />
           </IconButton>
@@ -265,11 +311,13 @@ function Home({ isLogged, doLogout,listenClear, listenAttendantStatus,listenMeet
           {handlePlot()}
         </div>
       </main>
+
     </div>
   );
 }
 
 const mapStateToProps = state => ({
+  loggedUser: state.userState.user,
   meeting: state.meetingState.meeting,
   isLogged: state.userState.isLogged,
   attendantStatus: state.refData.attendantStatus,
@@ -280,6 +328,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   doLogout,
+  clearMeetings,
   listenMeetingSchedule,
   listenAttendantStatus,
   listenMeetingStatus,

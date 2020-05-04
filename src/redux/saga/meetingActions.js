@@ -25,6 +25,9 @@ const LISTEN_CLEAR = 'LISTEN_CLEAR';
 const MEETING_SUCCESS = 'MEETING_SUCCESS';
 const MEETING_FAILURE = 'MEETING_FAILURE';
 
+const CLEAR_MEETINGS = 'CLEAR_MEETINGS';
+const LISTEN_CREAR_MEETING = 'LISTEN_CREAR_MEETING';
+
 const listenUpdateFamily = (meeting) => ({
   type:LISTEN_UPDATE_FAMILY,
   meeting
@@ -115,6 +118,11 @@ const meetingFailure = error => ({
   error
 });
 
+const clearMeetings = () => ({
+type: CLEAR_MEETINGS,
+meeting: []
+});
+
 export {
   meetingFailure,
   addMeeting,
@@ -134,6 +142,8 @@ export {
   listenDeleteMeeting,
   listenUpdateFamily,
   updateFamily,
+  clearMeetings,
+  CLEAR_MEETINGS,
   UPDATE_FAMILY,
   LISTEN_UPDATE_FAMILY,
   LISTEN_DELETE_MEETING,

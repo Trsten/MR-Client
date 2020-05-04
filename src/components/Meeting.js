@@ -101,7 +101,7 @@ function Meeting({ ...props}) {
         </div>
         <div className={classes.line}>
             <Typography variant="h6" className={classes.information} color='textSecondary'>
-            Recurrence 
+            Repeat 
             </Typography>
         <Typography variant="h6" className={classes.value}>
             {inf.meetingScheduleId}
