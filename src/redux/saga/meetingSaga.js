@@ -112,7 +112,7 @@ function* handleUpdateMeeting(newData) {
   yield put(meetingLoading(true));  
   if (result) {
     yield put(meetingSuccess("update"));
-    yield put(updateMeeting(newData)); 
+    yield put(updateMeeting(result)); 
   } else {
     if (error.response == null) {
       //TODO handleError(error)

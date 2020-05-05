@@ -91,7 +91,7 @@ const useStyles = makeStyles(theme => ({
 
   let openOnce = true;
 
-  function Detail({ listenUpdateMeeting,loggedUser, listenClear, listenDeleteMeeting, ...props}) {
+  function Detail({ listenUpdateMeeting,loggedUser,attendantStatus, listenClear, listenDeleteMeeting, ...props}) {
 
     const convertDate = (date) => {
       var dateStr = date.substring(0, date.length - 5);                 
@@ -173,8 +173,8 @@ const useStyles = makeStyles(theme => ({
     }
 
     const findAttendantStateId = (index) => {
-      if (props.attendantStatus) {
-        return props.attendantStatus.find( ({ id }) => id === index ).status;
+      if (attendantStatus) {
+        return attendantStatus.find( ({ id }) => id === index ).status;
       }
     }
 
@@ -192,14 +192,8 @@ const useStyles = makeStyles(theme => ({
 
     const findUser = (index) => {
       if (props.users != undefined) {
-        if (index === loggedUser.id) {
-          let user = props.users.find( ({ id }) => id === index );
-          user.name = 'You';
-          return user;
-        } else {
           return props.users.find( ({ id }) => id === index );
         }
-      }
     }
 
     const handleOpenEdit = () => {
@@ -224,12 +218,16 @@ const useStyles = makeStyles(theme => ({
     };
 
     const sendInfToMeeting = () => {
+      console.log(actualData);
+
       let local = Object.assign({}, actualData);
       let attendantsLocal = [];
 
       local.attendants.map(( att ) => {
-        let obj = {userId: getInvitedName(att.userId),
-          attendantStatusId: findAttendantStateId(att.attendantStatusId),
+        let obj = {userName: getInvitedName(att.userId),
+          userId: att.userId,
+          attendentStatus: findAttendantStateId(att.attendantStatusId),
+          attendantStatusId: att.attendantStatusId,
           id: att.id };
           attendantsLocal = [...attendantsLocal,obj];
       });
@@ -246,8 +244,11 @@ const useStyles = makeStyles(theme => ({
     }
 
   const updateFiles = (files) => {
-    console.log("UPDATE FILES");
     setInfoFiles(files);
+  }
+
+  const callRefresTable = () => {
+    props.refreshTable();
   }
  
   return(
@@ -304,7 +305,11 @@ const useStyles = makeStyles(theme => ({
               detail={sendInfToMeeting()} 
               infoFiles={infoFiles}
               updateFiles={updateFiles} 
-              editMode={editFiels} ></Meeting>}
+              editMode={editFiels} 
+              user={loggedUser}
+              attendantStatus={attendantStatus}
+              refreshTable={callRefresTable}
+              ></Meeting>}
        
         {  (loggedUser.id === props.detail.userId && !edit) ?
             <div>

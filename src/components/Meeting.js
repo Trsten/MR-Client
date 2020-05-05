@@ -6,6 +6,17 @@ import Typography from '@material-ui/core/Typography';
 import Collapse from '@material-ui/core/Collapse';
 import Moment  from 'react-moment';
 
+import EditIcon from '@material-ui/icons/Edit';
+import CheckIcon from '@material-ui/icons/Check';
+import ClearIcon from '@material-ui/icons/Clear';
+import IconButton from "@material-ui/core/IconButton";
+
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
+
+import { connect } from "react-redux";
+import { listenUpdateMeeting  } from '../redux/saga/meetingActions';
+
 import Files from './Files';
 
 const useStyles = makeStyles(theme => ({
@@ -43,27 +54,105 @@ const useStyles = makeStyles(theme => ({
         textJustify: 'inter-word',
         boxSizing: 'border-box',
       },
+    editIcon: {
+        marginLeft: '30%',
+
+    }
     }));
   
-function Meeting({ ...props}) {
+function Meeting({listenUpdateMeeting, ...props}) {
     
     const classes = useStyles();
 
-    const [ inf, setInf ] = useState(props.detail);
-    const [checked, setChecked] = React.useState(false);
+    const getUserInvitation = () => {
+        let user = props.detail.attendants.find(({ userName }) =>  userName === props.user.name );
+        if (user) {
+            console.log(user);
+            return {id: user.attendantStatusId,status: user.attendentStatus};
+        }
+        return null;
+    }
 
-    const handleChange = () => {
-        setChecked((prev) => !prev);
-      };
+    const [ inf, setInf ] = useState(props.detail);
+    const [ editInvitation, setEditInvitation  ] = useState(false);
+    const [ selectedState, setSelectedState ] = useState(getUserInvitation());
+
+    const openEditInvitation = () => {
+        setEditInvitation(true);
+    }
+
+    const closeEditInvitation = () => {
+        setEditInvitation(false);
+    }
+
+    const apllyEditInvitation = (attendant) => {
+        attendant.attendantStatus = selectedState.status;
+        attendant.attendantStatusId = selectedState.id;
+        setEditInvitation(false);
+
+        let attendants = [];
+        inf.attendants.map(( att ) => {
+            attendants = [...attendants,{
+                id: att.id,
+                attendantStatusId: att.attendantStatusId,
+                userId: att.userId
+            }]
+        });
+        listenUpdateMeeting({id: inf.id, attendants:attendants});
+        props.refreshTable();
+    }
+
+    const handleOnChangeUpdate = event => {
+        let status = props.attendantStatus.find(({ status }) => status === event.target.value);
+        setSelectedState({id: status.id,status: status.status});
+    }
+
+    const showInvitation = attendant => {
+        if ( attendant.userName === props.user.name ) {
+            if ( editInvitation ) {
+               return ( <div>
+                    You :   <TextField
+                    id="select-meeting-Status"
+                    select
+                    name="attendantStatus"
+                    value={selectedState.status}
+                    onChange={handleOnChangeUpdate}
+                    >
+                    {props.attendantStatus.map(status => (
+                    <MenuItem key={status.id} value={status.status}>
+                        {status.status}
+                    </MenuItem>
+                    ))}
+                </TextField>
+                    <IconButton className={classes.editIcon} onClick={event => apllyEditInvitation(attendant)}>
+                        <CheckIcon />
+                    </IconButton>
+                    <IconButton onClick={event => closeEditInvitation()}>
+                        <ClearIcon />
+                    </IconButton>
+                </div> );
+            } else {
+                return (
+                    <div>
+                        You : {selectedState.status}
+                        <IconButton className={classes.editIcon} onClick={event => openEditInvitation()}>
+                            <EditIcon />
+                        </IconButton>
+                    </div>);
+            }
+        } else {
+            return <div> {attendant.userName} : {attendant.attendentStatus} </div> 
+        }
+    }
 
     return (
         <div className={classes.detail}>
         <div className={classes.line}>
-        <Typography variant="h6"  color='textSecondary' className={classes.information}>
+            <Typography variant="h6"  color='textSecondary' className={classes.information}>
             Owner 
             </Typography>
-            <Typography variant="h6" className={classes.information} >
-                {inf.userId.name}
+            <Typography variant="h6" className={classes.value} >
+                {inf.userId.name === props.user.name ? "You" : inf.userId.name}
             </Typography>        
         </div>
         <div className={classes.line}>
@@ -130,7 +219,7 @@ function Meeting({ ...props}) {
             <Typography  variant="h6" className={classes.value}>
             {inf.attendants.map((attendant, i) => (
             <div key={`attendant-${i}`}>
-                <div>{attendant.userId} : {attendant.attendantStatusId} </div>
+                {showInvitation(attendant)}
             </div>
             ))}
             </Typography> 
@@ -154,4 +243,13 @@ function Meeting({ ...props}) {
     );
 }
 
-export default Meeting;
+const mapStateToProps = state => ({
+  });
+
+  const mapDispatchToProps = {
+    listenUpdateMeeting,
+  }
+  export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Meeting);

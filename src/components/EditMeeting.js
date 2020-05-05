@@ -114,7 +114,7 @@ const useStyles = makeStyles(theme => ({
     }
   
     const getMeetingStatuses = () => {
-      //TODO: ak je cas konania po aktualnom datume a case nie je mozne zmenit status meetingu na planovany
+      //TODO: ak sa meeting konal nemoze byt znova planovany
         var statuses = [];
         for(var i = 0 ; i < props.meetingState.length ; i++) {
             statuses.push({
@@ -126,7 +126,6 @@ const useStyles = makeStyles(theme => ({
     }
 
     const handleChangeSave = () => {
-      //TODO: treba dorobit update of all childrens 
         if (updates) {
             if ( updateOnetoEvery) {
               listenDeleteMeeting({ id: props.data.id, delChildrens: false } );
@@ -186,7 +185,7 @@ const useStyles = makeStyles(theme => ({
       };
 
       const handleOnChangeNewDate = newDate => {
-        //TODO: ak je datum meetingu po aktualnom čase nie je možnosť zmeniť čas
+        //TODO: ak sa meeting uz konal nemoze zmenit datum konania
           setUpdates({
               ...updates,
               date: newDate

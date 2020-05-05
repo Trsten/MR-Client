@@ -102,7 +102,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Home({ doLogout,clearMeetings, loggedUser,listenAttendantStatus, listenMeetingSchedule,listenMeetingStatus,listenGetUsers }) {
+function Home({ doLogout,clearMeetings, loggedUser,isLogged,listenAttendantStatus, listenMeetingSchedule,listenMeetingStatus,listenGetUsers }) {
 
   useEffect(() => { 
     listenAttendantStatus();
@@ -173,9 +173,9 @@ function Home({ doLogout,clearMeetings, loggedUser,listenAttendantStatus, listen
         } 
     }
 
-  // if(!isLogged) {
-  //   return <Redirect to="/"/>;
-  // }
+  if(!isLogged) {
+    return <Redirect to="/"/>;
+  }
 
   return (
     <div className={classes.root}>

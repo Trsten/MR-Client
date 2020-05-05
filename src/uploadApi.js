@@ -42,7 +42,6 @@ const fileDownload = (formData, config) =>
                 //download
                 
                 const url = window.URL.createObjectURL(new Blob([result.data]));
-                console.log(url);
                 const link = document.createElement('a');
                 link.href = url;
                 link.download = file.name; 
