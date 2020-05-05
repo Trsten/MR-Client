@@ -65,9 +65,11 @@ function Table({listenClear, ...props}) {
       var startDate = new Date(); 
       startDate.setHours(0,0,0,0);    
       var startDateJson = JSON.stringify(startDate);
-      
+      setSelectedStartDate(startDate);
+
       let endDate = getDate();
       var endDateJson = JSON.stringify(endDate);
+      setSelectedEndDate(endDate);
 
       var owner = props.filter === "owned" ? true : false;
       var attendant = false;
