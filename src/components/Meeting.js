@@ -118,12 +118,15 @@ function Meeting({listenUpdateMeeting, ...props}) {
                     value={selectedState.status}
                     onChange={handleOnChangeUpdate}
                     >
-                    {props.attendantStatus.map(status => (
-                    <MenuItem key={status.id} value={status.status}>
-                        {status.status}
-                    </MenuItem>
-                    ))}
-                </TextField>
+                    {props.attendantStatus.map(status => {
+                        if ( status.id !== 30 )
+                        return (
+                            <MenuItem key={status.id} value={status.status}>
+                                {status.status}
+                            </MenuItem>
+                        )
+                    })}
+                    </TextField>
                     <IconButton className={classes.editIcon} onClick={event => apllyEditInvitation(attendant)}>
                         <CheckIcon />
                     </IconButton>

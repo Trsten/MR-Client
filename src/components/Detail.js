@@ -250,7 +250,7 @@ const useStyles = makeStyles(theme => ({
   const callRefresTable = () => {
     props.refreshTable();
   }
- 
+
   return(
       <div>
         <Dialog open={showDeleteDialog.open} onClose={handleCloseDeleteDialog} aria-labelledby="form-dialog-title">
@@ -311,7 +311,7 @@ const useStyles = makeStyles(theme => ({
               refreshTable={callRefresTable}
               ></Meeting>}
        
-        {  (loggedUser.id === props.detail.userId && !edit) ?
+        {  (loggedUser.id === actualData.userId && !edit) ?
             <div>
               <Button
             variant="contained"
@@ -320,22 +320,22 @@ const useStyles = makeStyles(theme => ({
             onClick={handleChangeDelete}
             style={{ width: 150, marginLeft: '25%', maxHeight: '48px', minHeight: '48px' }}
           > Delete </Button>  
+          { actualData.meetingStatusId === 43 || actualData.meetingStatusId === 41 ? "" :
           <Button
-              //TODO: ak je meeting uzavrety už sa nemôže upravovať
               variant="contained"
               color="primary"
               className={classes.submit}
               onClick={handleOpenEditFiles}
               style={{ width: 150, marginLeft: '20pt', maxHeight: '48px', minHeight: '48px' }}
-            > { editFiels ? 'Leave Files' : 'Edit Files' } </Button> 
+          > { editFiels ? 'Leave Files' : 'Edit Files' } </Button> }
+           {actualData.meetingStatusId === 43 || actualData.meetingStatusId === 41 ? "" :
           <Button
-              //TODO: ak je meeting uzavrety už sa nemôže upravovať
               variant="contained"
               color="primary"
               className={classes.submit}
               onClick={handleOpenEdit}
               style={{ width: 150, marginLeft: '20pt', maxHeight: '48px', minHeight: '48px' }}
-            > Edit </Button> 
+          > Edit </Button> }
             
             </div>
             : '' }

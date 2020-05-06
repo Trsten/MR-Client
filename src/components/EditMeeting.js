@@ -26,6 +26,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import Checkbox from '@material-ui/core/Checkbox';
 
+import Moment  from 'react-moment';
+
 const useStyles = makeStyles(theme => ({
   toolbarButtons: {
     marginLeft: 'auto',
@@ -80,6 +82,7 @@ const useStyles = makeStyles(theme => ({
     const [ updateOnetoEvery, setUpdateOnetoEvery ] = useState(false);
     const [ showUpdateDialog, setShowUpdateDialog ] = useState(false);
     const [ checkedBox, setcheckedBox ] = useState("one");
+    const [ infDialog, setInfDialog ] = useState(false);
 
     const handleCloseUpdateDialog = () => {
       setShowUpdateDialog(false);
@@ -114,13 +117,16 @@ const useStyles = makeStyles(theme => ({
     }
   
     const getMeetingStatuses = () => {
-      //TODO: ak sa meeting konal nemoze byt znova planovany
         var statuses = [];
         for(var i = 0 ; i < props.meetingState.length ; i++) {
-            statuses.push({
-            value: props.meetingState[i].id,
-            label: props.meetingState[i].status
-            })
+          if (props.data.meetingStatusId !== 40) {
+            if ( props.meetingState[i].id !== 40 ) {
+              statuses.push({
+                value: props.meetingState[i].id,
+                label: props.meetingState[i].status
+                });
+              }
+            }
         }
         return statuses;
     }
@@ -182,10 +188,17 @@ const useStyles = makeStyles(theme => ({
             setUpdateOnetoEvery( event.target.value !== 50 ? true : false );
           }
         }
+        if ( event.target.name === "meetingStatusId" ) {
+          //cant anymore do changes
+          if ( event.target.value ===  41 || event.target.value === 43) {
+            setInfDialog(true);
+            setShowUpdateDialog(true);
+          }
+
+        }
       };
 
       const handleOnChangeNewDate = newDate => {
-        //TODO: ak sa meeting uz konal nemoze zmenit datum konania
           setUpdates({
               ...updates,
               date: newDate
@@ -241,12 +254,12 @@ const useStyles = makeStyles(theme => ({
     return(
         <div className={classes.detail}>
            <Dialog open={showUpdateDialog} onClose={handleCloseUpdateDialog} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Update meeting </DialogTitle>
+        <DialogTitle id="form-dialog-title">{infDialog ? "Warning"  : "Update meeting" }</DialogTitle>
         <DialogContent>
           <DialogContentText>
-          This meeting is repetitive would you like to update
+            { infDialog ? "When set this state, you cant add files and edit meeting anymore." : "This meeting is repetitive would you like to update."}
           </DialogContentText>
-          <FormGroup>
+          {infDialog ? "" : <FormGroup>
               <FormControl component="fieldset" className={classes.Checkboxes}>
                   <FormControlLabel
                     control={<Checkbox checked={isChecked("one")} onChange={handlecheckedBox} name="one" />}
@@ -257,15 +270,16 @@ const useStyles = makeStyles(theme => ({
                     label="every meeting" value="every"
                   />
               </FormControl>
-            </FormGroup>
+          </FormGroup>}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseUpdateDialog} color="primary">
-            Cancel
+            {infDialog ? "OK" : "Cancel"}
           </Button>
+          {infDialog ? "" :
           <Button onClick={handleApplyUpdateDialog} color="primary">
             Update
-          </Button>
+          </Button> }
         </DialogActions>
       </Dialog>
         <div className={classes.line}>
@@ -299,7 +313,16 @@ const useStyles = makeStyles(theme => ({
                 defaultValue={props.data.topic}
                 onChange={handleOnChangeUpdate}
                 className={classes.textField} /> 
-        </div>    
+        </div>   
+        { props.data.meetingStatusId !== 40 ? 
+        <div className={classes.line}>
+        <Typography variant="h6" className={classes.information} color='textSecondary'>
+        Date  
+        </Typography>
+    <Typography variant="h6" className={classes.value}>
+         <Moment format="DD.MM.YYYY">{props.data.date}</Moment> 
+    </Typography>
+          </div> :
         <div className={classes.line}>
             <Typography variant="h6" className={classes.information} color='textSecondary'>
             Date  
@@ -319,8 +342,18 @@ const useStyles = makeStyles(theme => ({
                 }}
             />
         </MuiPickersUtilsProvider>
-        </div>
-        <div className={classes.line}>
+        </div> }
+
+           { props.data.meetingStatusId !== 40 ?
+          <div className={classes.line}>
+          <Typography variant="h6" className={classes.information} color='textSecondary'>
+              Time 
+              </Typography>
+              <Typography variant="h6" className={classes.value}> 
+              <Moment format="HH:mm">{props.data.date}</Moment>
+              </Typography>
+              </div> :
+          <div className={classes.line}>
             <Typography variant="h6" className={classes.information} color='textSecondary'>
             Time 
             </Typography>
@@ -337,7 +370,16 @@ const useStyles = makeStyles(theme => ({
                     }}
                 />
         </MuiPickersUtilsProvider>
-        </div>
+        </div>} 
+        {  props.data.meetingStatusId !== 40 ?  
+        <div className={classes.line}>
+            <Typography variant="h6" className={classes.information} color='textSecondary'>
+            Place 
+            </Typography>
+            <Typography variant="h6" className={classes.value}>
+            {props.data.place}
+            </Typography> 
+        </div> :
         <div className={classes.line}>
             <Typography variant="h6" className={classes.information} color='textSecondary'>
             Place 
@@ -349,16 +391,26 @@ const useStyles = makeStyles(theme => ({
             onChange={handleOnChangeUpdate}
             className={classes.textField}
             /> 
-        </div>
+        </div> }
+        { props.data.meetingStatusId !== 40 ?
+         <div className={classes.line}>
+         <Typography variant="h6" className={classes.information} color='textSecondary'>
+         Repeat 
+         </Typography>
+     <Typography variant="h6" className={classes.value}>
+         { props.meetingSchedule.find(({ id }) => id === props.data.meetingScheduleId).recurrenceType}
+         </Typography>
+     </div> :
         <div className={classes.line}>
             <Typography variant="h6" className={classes.information} color='textSecondary'>
-            Recurrence 
+            Repeat 
             </Typography>
             <TextField
                 id="select-meeting-Status"
                 select
                 name="meetingScheduleId"
                 defaultValue={props.data.meetingScheduleId}
+                onClick={ () => setInfDialog(false)}
                 onChange={handleOnChangeUpdate}
             >
                  {getMeetingSchedule().map(option => (
@@ -367,7 +419,7 @@ const useStyles = makeStyles(theme => ({
                 </MenuItem>
                 ))}
             </TextField>
-        </div>
+        </div> }
         {  updateOnetoEvery ?  
         <div className={classes.line}>
             <Typography variant="h6" className={classes.information} color='textSecondary'>

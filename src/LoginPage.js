@@ -146,7 +146,7 @@ function LoginPage({ loggedUser, doLoginUser, isLogged, failMessage, ...props })
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
                     <Button simple color="primary" size="lg" onClick={onSubmit} >
-                      Get started
+                      LOGIN
                     </Button>
                   </CardFooter>
                 </form>
