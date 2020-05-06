@@ -216,6 +216,7 @@ const checkedMark = (name) => {
             onChange={handleChangeData}
             margin="normal"
             className={classes.textField}
+            inputProps={{maxLength: 30 }}
           />
             </div>
             <div>
@@ -229,6 +230,7 @@ const checkedMark = (name) => {
               required
               name="place"
               margin="normal"
+              inputProps={{maxLength: 20 }}
             />
             </div>
               <MuiPickersUtilsProvider utils={DateFnsUtils} >

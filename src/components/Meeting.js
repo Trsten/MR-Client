@@ -118,7 +118,7 @@ function Meeting({listenUpdateMeeting, ...props}) {
                     value={selectedState.status}
                     onChange={handleOnChangeUpdate}
                     >
-                    {props.attendantStatus.map(status => {
+                    { props.attendantStatus.map(status => {
                         if ( status.id !== 30 )
                         return (
                             <MenuItem key={status.id} value={status.status}>
@@ -138,9 +138,10 @@ function Meeting({listenUpdateMeeting, ...props}) {
                 return (
                     <div>
                         You : {selectedState.status}
+                        {inf.meetingStatusId === 40 ?
                         <IconButton className={classes.editIcon} onClick={event => openEditInvitation()}>
                             <EditIcon />
-                        </IconButton>
+                        </IconButton> : '' }
                     </div>);
             }
         } else {
@@ -204,7 +205,7 @@ function Meeting({listenUpdateMeeting, ...props}) {
             State 
             </Typography>
         <Typography variant="h6" className={classes.value}>
-            {inf.meetingStatusId}
+            {inf.meetingStatusName}
             </Typography>
         </div>
         <div className={classes.line}>

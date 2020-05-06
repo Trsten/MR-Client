@@ -233,7 +233,7 @@ const useStyles = makeStyles(theme => ({
       });
       local = {...local, 
         userId: findUser(actualData.userId),
-        meetingStatusId: findMeetingStateId(actualData.meetingStatusId),
+        meetingStatusName: findMeetingStateId(actualData.meetingStatusId),
         meetingScheduleId: findMeeingScheduleId(actualData.meetingScheduleId),
         attendants: attendantsLocal };
       return local;

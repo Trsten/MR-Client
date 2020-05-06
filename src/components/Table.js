@@ -211,7 +211,7 @@ function Table({listenClear, ...props}) {
     {
       Header: "Owner",
       accessor: "userId",
-      width: 60, maxWidth: 60, minWidth: 60,
+      width: 120, maxWidth: 120, minWidth: 60,
       textAlign: "auto",
       Cell: props => {
         return (<div>{findUser(props.original.userId)}</div>)}
@@ -248,6 +248,7 @@ function Table({listenClear, ...props}) {
         style: {
           textAlign: "center"
         },
+        width: 250, maxWidth: 250, minWidth: 200,
     },
     {
       Header: "Repeat",

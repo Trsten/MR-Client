@@ -300,7 +300,8 @@ const useStyles = makeStyles(theme => ({
                 required
                 defaultValue={props.data.shortTitle}
                 onChange={handleOnChangeUpdate}
-                className={classes.textField} /> 
+                inputProps={{maxLength: 30 }}
+                className={classes.textField} />
         </div>   
         <div className={classes.line}>
             <Typography variant="h6" className={classes.information} color='textSecondary'>
@@ -390,6 +391,7 @@ const useStyles = makeStyles(theme => ({
             defaultValue={props.data.place}
             onChange={handleOnChangeUpdate}
             className={classes.textField}
+            inputProps={{maxLength: 20 }}
             /> 
         </div> }
         { props.data.meetingStatusId !== 40 ?
@@ -412,7 +414,7 @@ const useStyles = makeStyles(theme => ({
                 defaultValue={props.data.meetingScheduleId}
                 onClick={ () => setInfDialog(false)}
                 onChange={handleOnChangeUpdate}
-            >
+                >
                  {getMeetingSchedule().map(option => (
                 <MenuItem key={option.value} value={option.value}>
                     {option.label}
