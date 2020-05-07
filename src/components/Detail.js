@@ -288,7 +288,7 @@ const useStyles = makeStyles(theme => ({
 
         <Toolbar>
           <Typography variant="h5" noWrap >
-            {actualData ? actualData.shortTitle : props.detail.shortTitle }
+            { edit ? "Edit Meeting" : actualData ? actualData.shortTitle : props.detail.shortTitle }
           </Typography>
           <Tooltip title="Close">
             <IconButton 
@@ -323,14 +323,13 @@ const useStyles = makeStyles(theme => ({
             onClick={handleChangeDelete}
             style={{ width: 150, marginLeft: '25%', maxHeight: '48px', minHeight: '48px' }}
           > Delete </Button>  
-          { possibleEdit() ? "" :
           <Button
               variant="contained"
               color="primary"
               className={classes.submit}
               onClick={handleOpenEditFiles}
               style={{ width: 150, marginLeft: '20pt', maxHeight: '48px', minHeight: '48px' }}
-          > { editFiels ? 'Leave Files' : 'Edit Files' } </Button> }
+          > { editFiels ? 'Leave Files' : 'Edit Files' } </Button> 
            {possibleEdit() ? "" :
           <Button
               variant="contained"

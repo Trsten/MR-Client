@@ -13,8 +13,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Toolbar from '@material-ui/core/Toolbar';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 
 import IconButton from "@material-ui/core/IconButton";
 import FilterListIcon from '@material-ui/icons/FilterList';
@@ -52,9 +50,11 @@ function Table({listenClear, ...props}) {
       marginBottom: theme.spacing(2),
     },
   toolbarButtons: {
-    marginLeft: 'auto',
     textAlign: "end"
   },
+  filterDate: {
+    marginLeft: 'auto',
+  }
   }));
 
   const classes = useStyles();
@@ -181,6 +181,30 @@ function Table({listenClear, ...props}) {
         }
       }
 
+      const findAttendantStateId = (index) => {
+        if (props.attendantStatus) {
+          let local = props.attendantStatus.find( ({ id }) => id === index );
+          if (local) {
+            return local.status;
+          }
+          return '';
+        }
+      }
+
+       //nezobrazujem pozvanky ak je vlastnikom meetingu
+       const removeInvitations = (meeting) => {
+        if (meeting.userId === props.loggedUser.id) {
+          return ""; 
+        } else {
+          for (var i = 0; i < meeting.attendants.length; i++) {
+            if(meeting.attendants[i].userId === props.loggedUser.id) {
+              return findAttendantStateId(meeting.attendants[i].attendantStatusId);
+            }
+          }
+        }
+      };
+
+
       const findMeeingScheduleId = (index) => {
         if (props.meetingSchedule != undefined) {
           let local = props.meetingSchedule.find( ({ id }) => id === index )
@@ -258,6 +282,15 @@ function Table({listenClear, ...props}) {
         return (<div>{findMeeingScheduleId(props.original.meetingScheduleId)}</div>)}
     },
     {
+      Header: "Invitation",
+      accessor: "meetingStatusId",
+      style: {
+        textAlign: "center"
+      },
+      Cell: props => {
+        return (<div>{removeInvitations(props.original)}</div>)}
+  },
+    {
       style: {
         textAlign: "center"
       },
@@ -324,6 +357,12 @@ function Table({listenClear, ...props}) {
       })
     }
 
+    // const makeFilterInterval = () => {
+    //   let start, end; 
+    //   start = selectedStartDate ? selectedStartDate : getDateZero();
+    //   end = selectedEndDate ? selectedStartDate :  new Date(getDate());
+
+
     const handleShowItemDetail = () => {
       if (showItemDetail.open) {
         return ( 
@@ -341,6 +380,9 @@ function Table({listenClear, ...props}) {
                 <Toolbar>
                   <Typography variant="h5" noWrap>
                         {props.title}
+                  </Typography>
+                  <Typography variant="h5" noWrap color='textSecondary' className={classes.filterDate} >
+                   <Moment format={"DD.MM.YY"}>{selectedStartDate ? selectedStartDate : getDateZero()}</Moment> - <Moment format={"DD.MM.YY"}>{selectedEndDate ? selectedEndDate :  new Date(getDate())}</Moment>
                   </Typography>
                   <Tooltip title="Filter">
                   <IconButton onClick={handleClickOpen}

@@ -163,13 +163,13 @@ function Home({ doLogout,clearMeetings, loggedUser,isLogged,listenAttendantStatu
   const handlePlot = () => {
     switch(selectedIndex) {
        case 0: 
-          return <Table filter="all" title="All meetings"/>;  
+          return <Table filter="all" title="Meetings"/>;  
       case 1: 
           return <CreateForm refresh={refresh} value={refreshCreateMeeting}/>;
       case 2:
           return <Table filter="invated to" title="Meetings where you are invited"/>; 
       case 3:
-          return <Table filter="owned" title="Meetings where you are leader"/>; 
+          return <Table filter="owned" title="Meeting where you are Lead"/>; 
       case 4:
           doLogout();
           clearMeetings();
@@ -222,7 +222,7 @@ function Home({ doLogout,clearMeetings, loggedUser,isLogged,listenAttendantStatu
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-             Meeting report 
+            Meeting Report Tool 
           </Typography>
           <IconButton 
           color="inherit"
@@ -281,7 +281,7 @@ function Home({ doLogout,clearMeetings, loggedUser,isLogged,listenAttendantStatu
           <ListItemIcon>
             <SendIcon />
           </ListItemIcon>
-          <ListItemText primary="Invited to" />
+          <ListItemText primary="You invited" />
         </ListItem>
 
         <ListItem
@@ -292,7 +292,7 @@ function Home({ doLogout,clearMeetings, loggedUser,isLogged,listenAttendantStatu
           <ListItemIcon>
             <EventSeatIcon />
           </ListItemIcon>
-          <ListItemText primary="Owned" />
+          <ListItemText primary="You as Lead" />
         </ListItem>
         <ListItem
           button

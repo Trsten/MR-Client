@@ -163,13 +163,12 @@ export default function TransferList({...props}) {
             disabled={right.length === 0}
             aria-label="move all left"
           >
-            ≪
           </Button>
         </Grid>
       </Grid>
       <Grid item>
       <Typography variant="h6">
-          Invited 
+          Invited s
       </Typography>
         {customList(right)}
         </Grid>

@@ -230,7 +230,7 @@ const checkedMark = (name) => {
           <Paper className={classes.paper}>
           <Toolbar>
           <Typography variant="h5" noWrap >
-            Create Meeting
+            New Meeting
           </Typography>
           </Toolbar>
 
