@@ -44,10 +44,8 @@ export default function TransferList({...props}) {
   };
 
   useEffect(() => {
-    if ( props.leftList.filter(obj => obj.id != props.owner).length > 0) {
+    if (props.refresh !== undefined) {
       handleAllLeft();
-    } else {
-      handleAllRight();
     }
   },[props.refresh]);
 
@@ -163,12 +161,13 @@ export default function TransferList({...props}) {
             disabled={right.length === 0}
             aria-label="move all left"
           >
+            ≪
           </Button>
         </Grid>
       </Grid>
       <Grid item>
       <Typography variant="h6">
-          Invited s
+          Invited
       </Typography>
         {customList(right)}
         </Grid>

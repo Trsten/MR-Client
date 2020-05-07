@@ -162,10 +162,12 @@ function CreateForm({listenAddMeeting,createMeetingAPI,listenClear,...props}) {
   };
 
   const handleEndDateChange = date => {
-    setEndDate(date);
+    let zeroDate = new Date(date);
+    zeroDate.setHours(0,0,0,0);
+    setEndDate(zeroDate);
     setData({
       ...data,
-      endDate: date
+      endDate: zeroDate
     });
   };
 

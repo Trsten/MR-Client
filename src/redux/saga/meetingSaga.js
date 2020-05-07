@@ -9,6 +9,7 @@ const addDate = (date,meeting) => {
   } else {
     date.setMonth(date.getMonth() + 1 );
   }
+  console.log(date);
   return date;
 }
 
@@ -87,11 +88,12 @@ function* handleMeetingAdd(meeting) {
     if( meeting.meeting.meetingScheduleId != 50) {
 
       let date = new Date(meeting.meeting.date.valueOf());
-      while (addDate(date,meeting.meeting) < meeting.meeting.endDate) {
+      while ( date <= meeting.meeting.endDate) {
           meeting.meeting = {...meeting.meeting,
             date: date,
             parentId: result.data.id
             };
+            date = addDate(date,meeting.meeting);
           yield call(createMeetingAPI, meeting);  
         }
       }    

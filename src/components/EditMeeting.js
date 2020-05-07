@@ -233,9 +233,11 @@ const useStyles = makeStyles(theme => ({
 
       const handleInvitations = (usersToInvite) => {
         let att = [];
-        usersToInvite.map(( user ) => (
-          att = [...att,{userId: user.id, attendantStatusId: 30 }]
-        ));
+        usersToInvite.map(( user ) => {
+          let status = props.data.attendants.find(( {userId} ) => userId === user.id)
+          att = [...att,{userId: user.id, attendantStatusId: status ? status.attendantStatusId : 30}];
+        }
+        );
         setUpdates({
           ...updates,
           attendants: att

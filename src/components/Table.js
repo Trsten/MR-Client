@@ -4,8 +4,10 @@ import 'react-table/react-table.css'
 import { connect } from "react-redux";
 import { listenGetFilteredMeetings, listenClear } from '../redux/saga/meetingActions';
 import { getLoggedUser } from '../redux/saga/loginActions';
-
 import { makeStyles } from '@material-ui/core/styles';
+
+
+import TableRowMenu from './TableRowMenu';
 
 import Typography from '@material-ui/core/Typography';
 
@@ -181,24 +183,52 @@ function Table({listenClear, ...props}) {
         }
       }
 
-      const findAttendantStateId = (index) => {
-        if (props.attendantStatus) {
-          let local = props.attendantStatus.find( ({ id }) => id === index );
-          if (local) {
-            return local.status;
-          }
-          return '';
+    const findAttendantStateId = (index) => {
+      if (props.attendantStatus) {
+        let local = props.attendantStatus.find( ({ id }) => id === index );
+        if (local) {
+          return local;
         }
+        return '';
       }
+    }
+
+      const showInvitedMenu = (event,attendants) => {
+        console.log(attendants);
+      }
+
+      const [anchorEl, setAnchorEl] = React.useState(null);
+      const open = Boolean(anchorEl);
+    
+      const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+      };
+    
+      const handleCloseInvitations = () => {
+        setAnchorEl(null);
+      };
+
+      const options = [
+        'None',
+        'Atria',
+      ];
 
        //nezobrazujem pozvanky ak je vlastnikom meetingu
        const removeInvitations = (meeting) => {
         if (meeting.userId === props.loggedUser.id) {
-          return ""; 
+          let listInvited = [] 
+          meeting.attendants.map(( att ) => {
+            let name = findUser(att.userId);
+            let state = findAttendantStateId(att.attendantStatusId)
+            listInvited = [...listInvited, {name: name, state: state.id}];
+          } );
+          return (
+          <TableRowMenu meeting={meeting.id} invited={listInvited}/>
+          )
         } else {
           for (var i = 0; i < meeting.attendants.length; i++) {
             if(meeting.attendants[i].userId === props.loggedUser.id) {
-              return findAttendantStateId(meeting.attendants[i].attendantStatusId);
+              return findAttendantStateId(meeting.attendants[i].attendantStatusId).status;
             }
           }
         }
@@ -357,12 +387,6 @@ function Table({listenClear, ...props}) {
       })
     }
 
-    // const makeFilterInterval = () => {
-    //   let start, end; 
-    //   start = selectedStartDate ? selectedStartDate : getDateZero();
-    //   end = selectedEndDate ? selectedStartDate :  new Date(getDate());
-
-
     const handleShowItemDetail = () => {
       if (showItemDetail.open) {
         return ( 
@@ -414,6 +438,42 @@ function Table({listenClear, ...props}) {
                   />
           </div>
         );
+      }
+    }
+
+    const handleAttendantStateChange = event => {
+      setAttendantStateFilter({...attendantStateFilter,value: event.target.value});
+    };
+
+    const getAttendantStatuses = () => {
+      var statuses = [];
+      for(var i = 0 ; i < props.attendantStatus.length ; i++) {
+        statuses.push({
+          value: props.attendantStatus[i].id,
+          label: props.attendantStatus[i].status
+        })
+      }
+      return statuses;
+    }
+
+    const handleShowFilterAttendant = () => {
+      if (attendantStateFilter.open) {
+        return (<TextField
+          id="standard-attendant-currency"
+          select
+          label="attendant status"
+          value={attendantStateFilter.value}
+          onChange={handleAttendantStateChange}
+          helperText="Please select attendant status"
+        >
+          {getAttendantStatuses().map(option => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>);
+      } else {
+        return;
       }
     }
 
@@ -492,6 +552,9 @@ function Table({listenClear, ...props}) {
           ))}
         </TextField>
          </div>
+         <div>
+           {handleShowFilterAttendant()}
+           </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">

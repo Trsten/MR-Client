@@ -67,7 +67,6 @@ function Meeting({listenUpdateMeeting, ...props}) {
     const getUserInvitation = () => {
         let user = props.detail.attendants.find(({ userName }) =>  userName === props.user.name );
         if (user) {
-            console.log(user);
             return {id: user.attendantStatusId,status: user.attendentStatus};
         }
         return null;
@@ -119,7 +118,7 @@ function Meeting({listenUpdateMeeting, ...props}) {
                     onChange={handleOnChangeUpdate}
                     >
                     { props.attendantStatus.map(status => {
-                        if ( status.id !== 30 )
+                        if ( status.id !== 30 || attendant.attendantStatusId === 30)
                         return (
                             <MenuItem key={status.id} value={status.status}>
                                 {status.status}
