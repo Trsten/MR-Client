@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -14,7 +14,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { KeyboardDatePicker,MuiPickersUtilsProvider,KeyboardTimePicker} from '@material-ui/pickers';
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
-
+import { listenClear } from '../redux/saga/meetingActions';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -61,24 +61,39 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function CreateForm({listenAddMeeting,createMeetingAPI,...props}) {
+let refreshed = false;
+
+function CreateForm({listenAddMeeting,createMeetingAPI,listenClear,...props}) {
+
+  const getClearData = () => {
+    return {
+      userId: props.loggedUser.id,
+      meetingStatusId: 40, 
+      meetingScheduleId: 50,
+      attendants: [],
+      date: startDate,
+      shortTitle: '',
+      endDate: endDate,
+      place: '',
+      description: '',
+      topic: ''
+    }
+  }
 
   const [mark, setMark] = useState("only once");
   const [endDate, setEndDate] = useState(new Date());
   const [startDate, setStartDate] = useState(new Date());
-  const [data, setData] = useState({
-    userId: props.loggedUser.id,
-    meetingStatusId: 40, 
-    meetingScheduleId: 50,
-    attendants: [],
-    //parentId: undefined, vôbec nepotrebujem doplny JPA podla priradeneho id
-    date: startDate,
-    shortTitle: '',
-    endDate: endDate,
-    place: '',
-    description: '',
-    topic: ''
-  });
+  const [data, setData] = useState(getClearData());
+  const [ refresh, setRefresh ] = useState(false);
+
+  useEffect(() => {
+      setEndDate(new Date());
+      setStartDate(new Date());
+      setMark("only once");
+      setData(getClearData());
+      changeRefresh();
+    },[props.value]);
+
 
   const handleChangeBox = event => {
     setMark( event.target.name );
@@ -90,9 +105,14 @@ function CreateForm({listenAddMeeting,createMeetingAPI,...props}) {
 
   const classes = useStyles();
 
-  const onSubmitCreate = () => {
+  const onSubmitCreate = async () => {
     listenAddMeeting(data);
     handleOpenAlter();
+    refreshed = true;
+  }
+
+  const changeRefresh = () => {
+    setRefresh(refresh ? false : true);
   }
 
   const handleChangeData = event => {
@@ -128,6 +148,7 @@ function CreateForm({listenAddMeeting,createMeetingAPI,...props}) {
       )
     } 
   }
+
 
   const handleStartDateChange = date => {
     setStartDate(date);
@@ -197,6 +218,14 @@ const checkedMark = (name) => {
       });
     };
 
+    if ( props.succesMessage === 'succes') {
+      if ( refreshed ) {
+        props.refresh();
+        listenClear();
+        refreshed = false;
+      }
+    }
+
     return(
           <Paper className={classes.paper}>
           <Toolbar>
@@ -213,6 +242,7 @@ const checkedMark = (name) => {
             helperText="Title of meeting"
             name="shortTitle"
             required
+            value={data.shortTitle}
             onChange={handleChangeData}
             margin="normal"
             className={classes.textField}
@@ -228,6 +258,7 @@ const checkedMark = (name) => {
               className={classes.textField}
               helperText="Place of the meeting"
               required
+              value={data.place}
               name="place"
               margin="normal"
               inputProps={{maxLength: 20 }}
@@ -258,6 +289,7 @@ const checkedMark = (name) => {
                   margin='normal'
                   id="time-picker"
                   label="Time"
+                  ampm={false}
                   helperText="Time of meeting"
                   keyboardIcon={<AccessAlarmsRoundedIcon />}
                   value={startDate.getTime()}
@@ -296,6 +328,7 @@ const checkedMark = (name) => {
                 label="Description"
                 placeholder="Placeholder"
                 multiline
+                value={data.description}
                 name="description"
                 className={classes.textField}
                 helperText="Import description"
@@ -309,13 +342,14 @@ const checkedMark = (name) => {
                 placeholder="Placeholder"
                 multiline
                 name="topic"
+                value={data.topic}
                 className={classes.textField}
                 helperText="Import topic"
                 onChange={handleChangeData}
               />
               </div>
             <div className={classes.TransferList}>
-              <TransferList inicialize={handleInvitations} leftList={props.users} rightList={[]} owner={props.loggedUser.id }/>
+              <TransferList refresh={refresh} inicialize={handleInvitations} leftList={props.users} rightList={[]} owner={props.loggedUser.id }/>
             </div>
           <Button
                 variant="contained"
@@ -335,6 +369,7 @@ const checkedMark = (name) => {
 const mapStateToProps = state => ({
     loggedUser: state.userState.user,
     failMessage: state.meetingState.failMessage,
+    succesMessage: state.meetingState.success,
     attendantStatus: state.refData.attendantStatus,
     meetingSchedule: state.refData.meetingSchedule,
     meetingState: state.refData.meetingState,
@@ -345,7 +380,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getLoggedUser,
   listenAddMeeting,
-  createMeetingAPI
+  createMeetingAPI,
+  listenClear
 }
 export default connect(
 mapStateToProps,

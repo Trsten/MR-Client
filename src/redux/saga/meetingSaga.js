@@ -96,6 +96,7 @@ function* handleMeetingAdd(meeting) {
         }
       }    
     yield put(addMeeting(result.data));
+    yield put(meetingSuccess('succes'));
   } else {
     if (error.response == null) {
         //TODO: handleError(error)

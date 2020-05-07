@@ -51,7 +51,7 @@ const getUsersAPI = () =>
 
 const updateMeetingAPI = (updatedMeeting) =>
   axios.put(MEETING_URL + 'update', updatedMeeting.updatedMeeting)
-  .then(result => ({ result }))
+  .then(result => ({result }))
   .catch(error => ({ error }))
 
 const updateFamilyMeetingsAPI = (meeting) =>

@@ -72,6 +72,8 @@ const useStyles = makeStyles(theme => ({
   },
   }));
 
+  
+
   function EditMeeting({ listenUpdateMeeting,listenUpdateFamily, listenClear,listenDeleteMeeting,listenAddMeeting,  ...props}) {
 
     const classes = useStyles();    
@@ -116,19 +118,34 @@ const useStyles = makeStyles(theme => ({
         return statuses;
     }
   
-    const getMeetingStatuses = () => {
-        var statuses = [];
-        for(var i = 0 ; i < props.meetingState.length ; i++) {
-          if (props.data.meetingStatusId !== 40) {
-            if ( props.meetingState[i].id !== 40 ) {
+  const getMeetingStatuses = () => {
+      var statuses = [];
+      for(var i = 0 ; i < props.meetingState.length ; i++) {
+        if (props.data.meetingStatusId !== 40 && new Date() > props.data.date) {
+          if ( props.meetingState[i].id === 42 || props.meetingState[i].id === 43 ) {
+            statuses.push({
+              value: props.meetingState[i].id,
+              label: props.meetingState[i].status
+              });
+            }
+          } else {
+            if ( props.data.meetingStatusId === 42 || props.data.meetingStatusId === 43 ) {
+                statuses.push({
+                  value: props.meetingState[i].id,
+                  label: props.meetingState[i].status
+                  });
+            } else {
+              if (props.meetingState[i].id !== 43) {
               statuses.push({
                 value: props.meetingState[i].id,
                 label: props.meetingState[i].status
                 });
               }
             }
+          }
+
         }
-        return statuses;
+      return statuses;
     }
 
     const handleChangeSave = () => {
@@ -190,7 +207,7 @@ const useStyles = makeStyles(theme => ({
         }
         if ( event.target.name === "meetingStatusId" ) {
           //cant anymore do changes
-          if ( event.target.value ===  41 || event.target.value === 43) {
+          if ( (event.target.value ===  41 || event.target.value === 43) && new Date() > props.data.date) {
             setInfDialog(true);
             setShowUpdateDialog(true);
           }
@@ -233,6 +250,10 @@ const useStyles = makeStyles(theme => ({
         });
         return att;
       };
+
+      if ( props.success === "succes"  && !props.loading ) {
+        props.refresh();
+      }
   
       const getLeftList = () => {
         let att = [];
@@ -314,8 +335,8 @@ const useStyles = makeStyles(theme => ({
                 defaultValue={props.data.topic}
                 onChange={handleOnChangeUpdate}
                 className={classes.textField} /> 
-        </div>   
-        { props.data.meetingStatusId !== 40 ? 
+        </div>  
+        { props.data.meetingStatusId !== 40 && new Date() > props.data.date ? 
         <div className={classes.line}>
         <Typography variant="h6" className={classes.information} color='textSecondary'>
         Date  
@@ -345,7 +366,7 @@ const useStyles = makeStyles(theme => ({
         </MuiPickersUtilsProvider>
         </div> }
 
-           { props.data.meetingStatusId !== 40 ?
+           { props.data.meetingStatusId !== 40 && new Date() > props.data.date?
           <div className={classes.line}>
           <Typography variant="h6" className={classes.information} color='textSecondary'>
               Time 
@@ -372,7 +393,7 @@ const useStyles = makeStyles(theme => ({
                 />
         </MuiPickersUtilsProvider>
         </div>} 
-        {  props.data.meetingStatusId !== 40 ?  
+        {  props.data.meetingStatusId !== 40 && new Date() > props.data.date?  
         <div className={classes.line}>
             <Typography variant="h6" className={classes.information} color='textSecondary'>
             Place 

@@ -118,6 +118,7 @@ function Home({ doLogout,clearMeetings, loggedUser,isLogged,listenAttendantStatu
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [ userInfo, setUserInfo ] = useState(false);
   const [ showPasw, setShowPasw ] = useState(false);
+  const [ refreshCreateMeeting, setRefreshCreateMeeting ] = useState(false);
 
   const showPasword = () => {
     setShowPasw(true);
@@ -151,15 +152,20 @@ function Home({ doLogout,clearMeetings, loggedUser,isLogged,listenAttendantStatu
   };
   
   const handleListItemClick = (event, index) => {
+    refresh();
     setSelectedIndex(index);
   };
+
+  const refresh = () => {
+    setRefreshCreateMeeting( refreshCreateMeeting ? false : true);
+  }
 
   const handlePlot = () => {
     switch(selectedIndex) {
        case 0: 
           return <Table filter="all" title="All meetings"/>;  
       case 1: 
-          return <CreateForm/>;
+          return <CreateForm refresh={refresh} value={refreshCreateMeeting}/>;
       case 2:
           return <Table filter="invated to" title="Meetings where you are invited"/>; 
       case 3:

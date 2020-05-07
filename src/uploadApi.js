@@ -47,10 +47,7 @@ const fileDownload = (formData, config) =>
                 document.body.appendChild(link);
                 link.click();
     
-            }
-            
-
-            
+            }            
         })
         .catch(error => console.log(error))
 

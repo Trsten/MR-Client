@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
@@ -34,11 +34,25 @@ function intersection(a, b) {
 
 export default function TransferList({...props}) {
   
-  const classes = useStyles();
-  const [checked, setChecked] = React.useState([]);
-
   const [left, setLeft] = React.useState(props.leftList.filter(obj => obj.id != props.owner));
   const [right, setRight] = React.useState(props.rightList.filter(obj => obj.id != props.owner));
+
+  const handleAllRight = () => {
+    setRight(right.concat(left));
+    setLeft([]);
+    props.inicialize(right.concat(left));
+  };
+
+  useEffect(() => {
+    if ( props.leftList.filter(obj => obj.id != props.owner).length > 0) {
+      handleAllLeft();
+    } else {
+      handleAllRight();
+    }
+  },[props.refresh]);
+
+  const classes = useStyles();
+  const [checked, setChecked] = React.useState([]);
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -55,11 +69,7 @@ export default function TransferList({...props}) {
     setChecked(newChecked);
   };
 
-  const handleAllRight = () => {
-    setRight(right.concat(left));
-    setLeft([]);
-    props.inicialize(right.concat(left));
-  };
+
 
   const handleCheckedRight = () => {
     setRight(right.concat(leftChecked));

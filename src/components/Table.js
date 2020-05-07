@@ -89,8 +89,6 @@ function Table({listenClear, ...props}) {
       tableFilter.attendant = attendant;
       tableFilter.owner = owner;
 
-      console.log(tableFilter);
-
       props.listenGetFilteredMeetings(tableFilter);
       },[props.filter]);
       
@@ -301,11 +299,6 @@ function Table({listenClear, ...props}) {
     };
 
     const handleCloseApply= () => {
-
-      console.log(selectedEndDate);
-      console.log(selectedStartDate);
-
-
       setShowFilterDlg(false);
       tableFilter.endDate = selectedEndDate.toJSON();
       tableFilter.startDate = selectedStartDate.toJSON();

@@ -128,7 +128,7 @@ const useStyles = makeStyles(theme => ({
   }
 
     const handleCloseDeleteDialog = () => {
-      setShowDeleteDialog({open: false});
+      setShowDeleteDialog({...showDeleteDialog,open: false});
     }
 
     const handleApplyDeleteDialog = () => {
@@ -165,7 +165,8 @@ const useStyles = makeStyles(theme => ({
 
     const handleChangeDelete = () => {
       let schedule = actualData.meetingScheduleId ? actualData.meetingScheduleId :  props.detail.meetingScheduleId;
-      if (  schedule !== 50 ) {
+      let state = actualData.meetingStatusId ? actualData.meetingStatusId :  props.detail.meetingStatusId;
+      if (  schedule !== 50 && state === 40 ) {
         setShowDeleteDialog({open:true, possibleMultipleDelet: true});
       } else {
         setShowDeleteDialog({open: true, possibleMultipleDelet: false})
@@ -218,8 +219,6 @@ const useStyles = makeStyles(theme => ({
     };
 
     const sendInfToMeeting = () => {
-      console.log(actualData);
-
       let local = Object.assign({}, actualData);
       let attendantsLocal = [];
 
@@ -249,6 +248,10 @@ const useStyles = makeStyles(theme => ({
 
   const callRefresTable = () => {
     props.refreshTable();
+  }
+
+  const possibleEdit = () => { 
+    return ( actualData.meetingStatusId === 43 || actualData.meetingStatusId === 41 ) && new Date() > actualData.date;
   }
 
   return(
@@ -320,7 +323,7 @@ const useStyles = makeStyles(theme => ({
             onClick={handleChangeDelete}
             style={{ width: 150, marginLeft: '25%', maxHeight: '48px', minHeight: '48px' }}
           > Delete </Button>  
-          { actualData.meetingStatusId === 43 || actualData.meetingStatusId === 41 ? "" :
+          { possibleEdit() ? "" :
           <Button
               variant="contained"
               color="primary"
@@ -328,7 +331,7 @@ const useStyles = makeStyles(theme => ({
               onClick={handleOpenEditFiles}
               style={{ width: 150, marginLeft: '20pt', maxHeight: '48px', minHeight: '48px' }}
           > { editFiels ? 'Leave Files' : 'Edit Files' } </Button> }
-           {actualData.meetingStatusId === 43 || actualData.meetingStatusId === 41 ? "" :
+           {possibleEdit() ? "" :
           <Button
               variant="contained"
               color="primary"
