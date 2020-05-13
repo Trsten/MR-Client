@@ -67,6 +67,10 @@ function LoginPage({ loggedUser, doLoginUser, isLogged, failMessage, ...props })
     return <Redirect to='/home'/>
   }
 
+  if (failMessage === 'no response') {
+    return <Redirect to="/ErrorPage"/>;
+  }
+
   return (
     <div>
       <div

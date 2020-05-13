@@ -3,13 +3,13 @@ import { meetingFailure, meetingLoading,addMeeting, meetingSuccess, getMeeting, 
 import { getMeetingAPI, createMeetingAPI, getFilteredMeetingsAPI, updateMeetingAPI, deleteMeetingAPI, updateFamilyMeetingsAPI } from '../../api';
 import { fileDelete,getFilesInfo  } from '../../uploadApi';
 
+
 const addDate = (date,meeting) => {
   if ( meeting.meetingScheduleId === 51) {
     date.setDate(date.getDate() + 7 );
   } else {
     date.setMonth(date.getMonth() + 1 );
   }
-  console.log(date);
   return date;
 }
 
@@ -40,7 +40,7 @@ function* handleDeleteMeeting(index) {
     yield put(deleteMeeting(index.index));
   } else {
     if (error.response == null) {
-      //TODO handleError(error)
+      yield put(meetingFailure('no response'));
     } else {
       console.log(error);
       yield put(meetingFailure(error.response.headers.message));
@@ -57,7 +57,7 @@ function* handleMeetingGet(index) {
     yield put(getMeeting(result.data));
   } else {
     if (error.response == null) {
-      // handleError(error)
+      yield put(meetingFailure('no response'));
     } else {
     yield put(meetingFailure(error.response.headers.message));
     }
@@ -71,7 +71,7 @@ function* handleFilteredMeetings(filter) {
     yield put(getFilteredMeetings(result.data));
   } else {
     if (error.response == null) {
-      // handleError(error)
+      yield put(meetingFailure('no response'));
     } else {
     yield put(meetingFailure(error.response.headers.message));
     }
@@ -84,7 +84,6 @@ function* handleMeetingAdd(meeting) {
   const { result, error } = yield call(createMeetingAPI, meeting);
   yield put(meetingFailure(null));
   if (result) {
-    //TODO: treba skontrolovat pre kazdy vytvoreny meeting
     if( meeting.meeting.meetingScheduleId != 50) {
 
       let date = new Date(meeting.meeting.date.valueOf());
@@ -101,7 +100,7 @@ function* handleMeetingAdd(meeting) {
     yield put(meetingSuccess('succes'));
   } else {
     if (error.response == null) {
-        //TODO: handleError(error)
+      yield put(meetingFailure('no response'));
     } else {
       yield put(meetingFailure(error.response.headers.message));
     }
@@ -118,7 +117,7 @@ function* handleUpdateMeeting(newData) {
     yield put(updateMeeting(result)); 
   } else {
     if (error.response == null) {
-      //TODO handleError(error)
+      yield put(meetingFailure('no response'));
     } else {
       yield put(meetingFailure(error.response.headers.message));
     }
@@ -136,7 +135,7 @@ function* handleUpdateFamily(newData) {
     yield put(updateMeeting(newData)); 
   } else {
     if (error.response == null) {
-      //TODO handleError(error)
+      yield put(meetingFailure('no response'));
     } else {
       yield put(meetingFailure(error.response.headers.message));
     }

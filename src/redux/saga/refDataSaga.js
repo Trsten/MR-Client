@@ -10,7 +10,7 @@ function* handleMeetingStatusGet() {
       yield put(getMeetingStatus(result.data));
     } else {
       if (error.response == null) {
-        // handleError(error)
+        yield put(refDataFailure('no response'));
       } else {
         console.log(error.response.headers.message);
         yield put(refDataFailure,(error.response.headers.message));
@@ -26,7 +26,7 @@ function* handleMeetingScheduleGet() {
     yield put(getMeetingSchedule(result.data));
   } else {
     if (error.response == null) {
-      // handleError(error)
+      yield put(refDataFailure('no response'));
     } else {
       console.log(error.response.headers.message);
       yield put(refDataFailure,(error.response.headers.message));
@@ -42,7 +42,7 @@ function* handleAttendantStatusGet() {
     yield put(getAttendantStatus(result.data));
   } else {
     if (error.response == null) {
-      // handleError(error)
+      yield put(refDataFailure('no response'));
     } else {
       console.log(error.response.headers.message);
       yield put(refDataFailure,(error.response.headers.message));
@@ -58,7 +58,7 @@ function* handleUsersGet() {
     yield put(getUsers(result.data));
   } else {
     if (error.response == null) {
-      // handleError(error)
+      yield put(refDataFailure('no response'));
     } else {
       console.log(error.response.headers.message);
       yield put(refDataFailure,(error.response.headers.message));

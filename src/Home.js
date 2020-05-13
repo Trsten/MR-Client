@@ -102,7 +102,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Home({ doLogout,clearMeetings, loggedUser,isLogged,listenAttendantStatus, listenMeetingSchedule,listenMeetingStatus,listenGetUsers }) {
+function Home({ doLogout,clearMeetings, loggedUser,isLogged,listenAttendantStatus, 
+  listenMeetingSchedule,listenMeetingStatus,listenGetUsers,failMessageRef,failMessageMet,failMessage }) {
 
   useEffect(() => { 
     listenAttendantStatus();
@@ -182,6 +183,11 @@ function Home({ doLogout,clearMeetings, loggedUser,isLogged,listenAttendantStatu
   if(!isLogged) {
     return <Redirect to="/"/>;
   }
+
+  if (failMessage === 'no response' || failMessageRef === 'no response' || failMessageMet === 'no response' ) {
+    return <Redirect to="/ErrorPage"/>;
+  }
+
 
   return (
     <div className={classes.root}>
@@ -331,6 +337,8 @@ const mapStateToProps = state => ({
   meetingStatus: state.refData.meetingStatus,
   users: state.refData.users,
   failMessage: state.userState.failMessage,
+  failMessageRef: state.refData.failMessage,
+  failMessageMet:state.meetingState.failMessage
 });
 const mapDispatchToProps = {
   doLogout,
