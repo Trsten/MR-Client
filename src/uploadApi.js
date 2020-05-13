@@ -1,7 +1,4 @@
 import axios from "axios"
-//import { handleError } from "./handleError"
-
-//const FILE_MOVE_URL = EAP_SERVER_URL + "/file/move"
 
 const FILE_URL = 'http://localhost:9080/mrreport/file';
 const FILE_DELETE_URL = FILE_URL + "/delete/entity";
@@ -18,12 +15,7 @@ const fileDelete = (formData) =>
 const fileUpload = (formData, config) =>
     axios.post(FILE_UPLOAD_URL, formData, config)
         .then(result => ({ result }))
-        .catch(error => console.log(error))
-
-const fileDeleteTmpFolder = (tmpFolder) =>
-    axios.post(FILE_DELETE_TMP_FOLDER_URL + tmpFolder)
-        .then(result => ({ result }))
-        .catch(error => console.log(error))
+        .catch(error => ({error}))
 
 const fileDownload = (formData, config) =>
     axios.post(FILE_DOWNLOAD_URL, formData, config)
@@ -49,7 +41,7 @@ const fileDownload = (formData, config) =>
     
             }            
         })
-        .catch(error => console.log(error))
+        .catch(error => ({error}))
 
 const getFilesInfo = (formData) => 
     axios.post(FILE_INFO_URL, formData)
@@ -57,10 +49,8 @@ const getFilesInfo = (formData) =>
     .catch(error => ({ error }))
 
 export {
-    //fileMove,
     fileDelete,
     fileUpload,
     fileDownload,
-    fileDeleteTmpFolder,
     getFilesInfo
 };
