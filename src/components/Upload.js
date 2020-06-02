@@ -156,7 +156,6 @@ function Upload({ files, successfullUploaded, handleDelete,...props }) {
           {files.map( (file, index) => {
             return (
               <div key={file.name} className="Row">
-              {/* <Progress progress={80} ></Progress>  */}
                 <Chip
                   className={classes.root}
                   size="medium"

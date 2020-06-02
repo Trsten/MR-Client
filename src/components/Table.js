@@ -36,6 +36,8 @@ import { KeyboardDatePicker,MuiPickersUtilsProvider} from '@material-ui/pickers'
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 var tableFilter = {
   userId: 0,
   startDate: '',
@@ -56,7 +58,11 @@ function Table({listenClear, ...props}) {
   },
   filterDate: {
     marginLeft: 'auto',
-  }
+  },
+  proccess: {
+    marginTop: '25px',
+    marginBottom: '25px'
+  },
   }));
 
   const classes = useStyles();
@@ -105,13 +111,13 @@ function Table({listenClear, ...props}) {
       const getDate = () => {        
       var tempDate = new Date();
       tempDate.setDate(tempDate.getDate() + 14);
-      tempDate.setHours(23,59,59);
+      tempDate.setHours(23,59,59,59);
       return tempDate;
       }
 
       const getDateZero = () => {
         var tempDate = new Date();
-        tempDate.setHours(0,0,0);
+        tempDate.setHours(0,0,0,0);
         return tempDate;
       }
 
@@ -257,6 +263,7 @@ function Table({listenClear, ...props}) {
 
     if ( props.success === "update"  && !props.loading ) {
       handleCloseApply();
+      listenClear();
     }
 
     let columns = [
@@ -417,6 +424,9 @@ function Table({listenClear, ...props}) {
                       </IconButton>
                     </Tooltip>
                 </Toolbar>
+                {props.loading ? <div className={classes.submit} style={{ marginLeft: 200 }}><CircularProgress 
+            className={classes.proccess}
+             /></div> :
                   <ReactTable
                   columns={columns}
                   data={props.meetings || ''}
@@ -435,7 +445,7 @@ function Table({listenClear, ...props}) {
                       return {};
                     }
                   }}
-                  />
+                /> }
           </div>
         );
       }
@@ -578,7 +588,8 @@ const mapStateToProps = state => ({
     attendantStatus: state.refData.attendantStatus,
     meetingSchedule: state.refData.meetingSchedule,
     meetingState: state.refData.meetingState,
-    users: state.refData.users
+    users: state.refData.users,
+    loading: state.meetingState.loading
 });
 const mapDispatchToProps = {
     listenGetFilteredMeetings,

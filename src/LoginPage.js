@@ -112,7 +112,7 @@ function LoginPage({ loggedUser, doLoginUser, isLogged, failMessage, ...props })
                     name="email"
                     type="email"
                     autoComplete="email"
-                    inputProps={{maxLength: 100 }}
+                    inputProps={{maxLength: 32 }}
                     autoFocus
                     onChange={handleChange}
                     InputProps={{
@@ -132,7 +132,7 @@ function LoginPage({ loggedUser, doLoginUser, isLogged, failMessage, ...props })
         name="password"
         label="Password"
         type="password"
-        inputProps={{maxLength: 100 }}
+        inputProps={{maxLength: 32 }}
         id="password"
         autoComplete="current-password"
         onChange={handleChange}

@@ -20,6 +20,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import Toolbar from '@material-ui/core/Toolbar';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 
@@ -29,7 +31,16 @@ import Typography from '@material-ui/core/Typography';
 
 import {createMeetingAPI, getMeetingStatusAPI, loginUser} from '../api';
 
+const PLANNING = 40;
+const ONLY_ONCE = 50;
+
 const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+    '& > * + *': {
+      marginLeft: theme.spacing(2),
+    },
+  },
   textField: {
     width: '50%'
   },
@@ -58,7 +69,11 @@ const useStyles = makeStyles(theme => ({
   },
   TransferList: {
     marginTop: '25px',
-  }
+  },
+  proccess: {
+    marginTop: '25px',
+    marginBottom: '25px'
+  },
 }));
 
 let refreshed = false;
@@ -68,8 +83,8 @@ function CreateForm({listenAddMeeting,createMeetingAPI,listenClear,...props}) {
   const getClearData = () => {
     return {
       userId: props.loggedUser.id,
-      meetingStatusId: 40, 
-      meetingScheduleId: 50,
+      meetingStatusId: PLANNING, 
+      meetingScheduleId: ONLY_ONCE,
       attendants: [],
       date: startDate,
       shortTitle: '',
@@ -236,6 +251,8 @@ const checkedMark = (name) => {
           </Typography>
           </Toolbar>
 
+         
+
         <form className={classes.form} >
             <div>
             <TextField
@@ -353,7 +370,9 @@ const checkedMark = (name) => {
             <div className={classes.TransferList}>
               <TransferList refresh={refresh} inicialize={handleInvitations} leftList={props.users} rightList={[]} owner={props.loggedUser.id }/>
             </div>
-          <Button
+            { props.loading ? <div className={classes.submit} style={{ marginLeft: 200 }}><CircularProgress 
+            className={classes.proccess}
+             /></div> :  <Button
                 variant="contained"
                 color="primary"
                 className={classes.submit}
@@ -361,7 +380,7 @@ const checkedMark = (name) => {
                 style={{ width: 350, marginLeft: 30, maxHeight: '48px', minHeight: '48px' }}
               >
                 Create Meeting
-          </Button>    
+          </Button>    }
         </form>
         {showAlter()}
       </Paper>

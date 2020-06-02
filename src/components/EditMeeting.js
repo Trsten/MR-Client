@@ -26,6 +26,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import Checkbox from '@material-ui/core/Checkbox';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 import Moment  from 'react-moment';
 
 const useStyles = makeStyles(theme => ({
@@ -62,6 +64,10 @@ const useStyles = makeStyles(theme => ({
     width: '80%',
     margin: 'auto',
   },
+  proccess: {
+    marginTop: '25px',
+    marginBottom: '25px'
+  },
   submit: {
     marginTop: '25px',
     marginRight: 'auto',
@@ -72,9 +78,14 @@ const useStyles = makeStyles(theme => ({
   },
   }));
 
-  
+  const ONLY_ONCE = 50;
+  const INVITED = 30;
+  let waitForMail = false;
 
   function EditMeeting({ listenUpdateMeeting,listenUpdateFamily, listenClear,listenDeleteMeeting,listenAddMeeting,  ...props}) {
+
+
+    console.log(props.data);
 
     const classes = useStyles();    
 
@@ -150,11 +161,14 @@ const useStyles = makeStyles(theme => ({
 
     const handleChangeSave = () => {
         if (updates) {
-            if ( updateOnetoEvery) {
+          console.log("KKTINA");
+          if ( updateOnetoEvery) {
+              waitForMail = true;
+              //z only one to every week/month
               listenDeleteMeeting({ id: props.data.id, delChildrens: false } );
               let att = updates.attendants ? updates.attendants : props.data.attendants;
               let prepareAtt = att.map(( attendant ) => {
-                return {userId: attendant.userId, attendantStatusId: 30 }
+                return {userId: attendant.userId, attendantStatusId: INVITED }
               }) 
               delete props.data.id; 
               listenAddMeeting({
@@ -162,7 +176,7 @@ const useStyles = makeStyles(theme => ({
                 ... updates,
                 attendants: prepareAtt});
             } else {
-              if ( (!updates.meetingScheduleId && props.data.meetingScheduleId === 50) || updates.meetingScheduleId === 50 ) {
+              if ( (!updates.meetingScheduleId && props.data.meetingScheduleId === ONLY_ONCE) || updates.meetingScheduleId === ONLY_ONCE ) {
                 listenUpdateMeeting({
                   ...updates,
                   id: props.data.id,
@@ -171,12 +185,14 @@ const useStyles = makeStyles(theme => ({
                 if ( !updates.meetingScheduleId  || props.data.meetingScheduleId === updates.meetingScheduleId ) {
                   setShowUpdateDialog(true);
                 } else {
-                  listenDeleteMeeting({ id: props.data.id, delChildrens: true } );
+                  //every to every
+                  waitForMail = true;
+                  delete props.data.id; 
+                    listenDeleteMeeting({ id: props.data.id, delChildrens: true } );
                   let att = updates.attendants ? updates.attendants : props.data.attendants;
                   let prepareAtt = att.map(( attendant ) => {
-                    return {userId: attendant.userId, attendantStatusId: 30 }
-                  }) 
-                  delete props.data.id; 
+                    return {userId: attendant.userId, attendantStatusId: INVITED }
+                  });
                   listenAddMeeting({
                     ...props.data,
                     ... updates,
@@ -184,6 +200,7 @@ const useStyles = makeStyles(theme => ({
                 }
               }
             }
+            props.refresh();
         } else {
           props.update(
             Object.assign({}, props.data),
@@ -191,88 +208,87 @@ const useStyles = makeStyles(theme => ({
         }
     };
 
-      const handleChangeCancel = () => {
-          props.update(props.data,{open: false, severity: "none"});
-        };
+    const handleChangeCancel = () => {
+        props.update(props.data,{open: false, severity: "none"});
+      };
 
-      const handleOnChangeUpdate = event => {
+    const handleOnChangeUpdate = event => {
+      setUpdates({
+          ...updates,
+          [event.target.name]: event.target.value
+      });
+      if ( event.target.name ===  "meetingScheduleId") {
+        if ( props.data.meetingScheduleId === 50 ) {
+          setUpdateOnetoEvery( event.target.value !== 50 ? true : false );
+        }
+      }
+      if ( event.target.name === "meetingStatusId" ) {
+        //cant anymore do changes
+        if ( (event.target.value ===  41 || event.target.value === 43) && new Date() > props.data.date) {
+          setInfDialog(true);
+          setShowUpdateDialog(true);
+        }
+
+      }
+    };
+
+    const handleOnChangeNewDate = newDate => {
         setUpdates({
             ...updates,
-            [event.target.name]: event.target.value
+            date: newDate
         });
-        if ( event.target.name ===  "meetingScheduleId") {
-          if ( props.data.meetingScheduleId === 50 ) {
-            setUpdateOnetoEvery( event.target.value !== 50 ? true : false );
-          }
-        }
-        if ( event.target.name === "meetingStatusId" ) {
-          //cant anymore do changes
-          if ( (event.target.value ===  41 || event.target.value === 43) && new Date() > props.data.date) {
-            setInfDialog(true);
-            setShowUpdateDialog(true);
-          }
+        setUpdateDate(newDate);
+    };
 
-        }
-      };
+    const handleOnChangenewEndDate = newDate => {
+      setUpdates({
+        ...updates,
+        endDate: newDate
+      });
+      setUpdateEndDate(newDate);
+    }
 
-      const handleOnChangeNewDate = newDate => {
-          setUpdates({
-              ...updates,
-              date: newDate
-          });
-          setUpdateDate(newDate);
-      };
+    const handleInvitations = (usersToInvite) => {
+      let att = [];
+      usersToInvite.map(( user ) => {
+        let status = props.data.attendants.find(( {userId} ) => userId === user.id)
+        att = [...att,{userId: user.id, attendantStatusId: status ? status.attendantStatusId : 30}];
+      }
+      );
+      setUpdates({
+        ...updates,
+        attendants: att
+      });
+    };
 
-      const handleOnChangenewEndDate = newDate => {
-        setUpdates({
+    const getRightList = () => {
+      let att = [];
+      props.data.attendants.map(( attendant ) => {
+        let index = attendant.userId;
+        att = [...att,props.users.find( ({ id }) => id === index )];
+      });
+      return att;
+    };
+
+    const getLeftList = () => {
+      let att = [];
+      props.users.map(( user ) => {
+        if (!props.data.attendants.some(e => e.userId === user.id)) { 
+          att = [...att,user];
+        } ;         
+      });
+      return att;
+    };
+
+    if( props.success === "succes" && props.loading === false) {
+      waitForMail = false;
+    }
+
+    if( props.success === "update" && props.loading === false) {
+      props.update({
           ...updates,
-          endDate: newDate
-        });
-        setUpdateEndDate(newDate);
-      }
-
-      const handleInvitations = (usersToInvite) => {
-        let att = [];
-        usersToInvite.map(( user ) => {
-          let status = props.data.attendants.find(( {userId} ) => userId === user.id)
-          att = [...att,{userId: user.id, attendantStatusId: status ? status.attendantStatusId : 30}];
-        }
-        );
-        setUpdates({
-          ...updates,
-          attendants: att
-        });
-      };
-
-      const getRightList = () => {
-        let att = [];
-        props.data.attendants.map(( attendant ) => {
-          let index = attendant.userId;
-          att = [...att,props.users.find( ({ id }) => id === index )];
-        });
-        return att;
-      };
-
-      if ( props.success === "succes"  && !props.loading ) {
-        props.refresh();
-      }
-  
-      const getLeftList = () => {
-        let att = [];
-        props.users.map(( user ) => {
-          if (!props.data.attendants.some(e => e.userId === user.id)) { 
-            att = [...att,user];
-          } ;         
-        });
-        return att;
-      };
-
-      if( props.success === "update") {
-        props.update({
-            ...updates,
-        },{open: true, severity: "success", msg: "Meetgin was succesfully updated !"});
-        listenClear();
-      }
+      },{open: true, severity: "success", msg: "Meetgin was succesfully updated !"});
+    }
 
     return(
         <div className={classes.detail}>
@@ -383,6 +399,7 @@ const useStyles = makeStyles(theme => ({
             </Typography>
             <MuiPickersUtilsProvider utils={DateFnsUtils} >
             <KeyboardTimePicker
+                    ampm={false}
                     required
                     id="time-picker"
                     name="time"
@@ -504,6 +521,13 @@ const useStyles = makeStyles(theme => ({
                 rightList={getRightList()} 
                 owner={props.data.userId} />
         </div>
+        { waitForMail ?
+            <div style={{ marginLeft: 200 }}>
+               <CircularProgress 
+            className={classes.proccess}
+             />
+            </div> :
+            <div>
         <Button
             variant="contained"
             color="primary"
@@ -517,7 +541,7 @@ const useStyles = makeStyles(theme => ({
             className={classes.submit}
             onClick={handleChangeCancel}
             style={{ width: 150, marginLeft: '20pt', maxHeight: '48px', minHeight: '48px' }}
-        > Cancel </Button> 
+        > Cancel </Button></div> }
   </div>
   );
 }

@@ -90,6 +90,7 @@ const useStyles = makeStyles(theme => ({
   }));
 
   let openOnce = true;
+  let waitForMail = true;
 
   function Detail({ listenUpdateMeeting,loggedUser,attendantStatus, listenClear, listenDeleteMeeting, ...props}) {
 
@@ -139,11 +140,18 @@ const useStyles = makeStyles(theme => ({
         listenDeleteMeeting({ id: props.detail.id, delChildrens: checkedBox === "one" ? false : true, files: infoFiles} );
       }      
       handleCloseDeleteDialog()
+      waitForMail = false;
     }
 
-    if ( props.success === "delete"  && !props.loading ) {
-      props.closeDetail();
+    if ( props.success === "delete"  && !props.loading && !waitForMail ) {
       props.refreshTable();
+      props.closeDetail();
+      listenClear();
+      waitForMail = true;
+    }
+
+    const close = () => {
+      props.closeDetail();
     }
 
     const handlecheckedBox = ( event ) => {
@@ -250,6 +258,17 @@ const useStyles = makeStyles(theme => ({
     props.refreshTable();
   }
 
+  if( props.success === "succes" && props.loading === false) {
+    props.refreshTable();
+    props.closeDetail();
+    listenClear();
+  }
+
+  if( props.success === "update" && props.loading === false) {
+    props.refreshTable();
+    listenClear();
+  }
+
   const possibleEdit = () => { 
     return ( actualData.meetingStatusId === 43 || actualData.meetingStatusId === 41 ) && new Date() > actualData.date;
   }
@@ -303,7 +322,7 @@ const useStyles = makeStyles(theme => ({
         { edit ? <EditMeeting 
           update={onChangeActualData} 
           data={Object.assign({}, actualData)} 
-          closeAll={props.closeDetail} ></EditMeeting> 
+          refresh={callRefresTable} ></EditMeeting> 
           : <Meeting 
               detail={sendInfToMeeting()} 
               infoFiles={infoFiles}

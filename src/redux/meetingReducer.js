@@ -15,15 +15,20 @@ function meetingOperation(state = INITIAL_STATE, action) {
             let arr = [...state];
             let meeting = arr.find( ({ id }) => id === action.index.id );
 
-            if ( meeting.parentId ) {
-                var newArr = arr.filter(function( mt ) {
-                        return mt.parentId != meeting.parentId;
-                    });
-            } else {
-                var newArr = arr.filter(function( mt ) {
-                    return mt.parentId != meeting.id;
-                  });
-            }
+            if ( meeting) {
+                if (  meeting.parentId ) {
+                    var newArr = arr.filter(function( mt ) {
+                            return mt.parentId != meeting.parentId;
+                        });
+                } else {
+                    var newArr = arr.filter(function( mt ) {
+                        return mt.parentId != meeting.id;
+                      });
+                }
+             } else {
+                 return arr;
+             }
+            
             let index = newArr.findIndex(x => x.id === action.index.id);
             if (index >= 0) {
                 newArr.splice(index, 1);

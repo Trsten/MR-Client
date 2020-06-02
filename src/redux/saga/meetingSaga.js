@@ -3,7 +3,6 @@ import { meetingFailure, meetingLoading,addMeeting, meetingSuccess, getMeeting, 
 import { getMeetingAPI, createMeetingAPI, getFilteredMeetingsAPI, updateMeetingAPI, deleteMeetingAPI, updateFamilyMeetingsAPI } from '../../api';
 import { fileDelete,getFilesInfo  } from '../../uploadApi';
 
-
 const addDate = (date,meeting) => {
   if ( meeting.meetingScheduleId === 51) {
     date.setDate(date.getDate() + 7 );
@@ -42,7 +41,6 @@ function* handleDeleteMeeting(index) {
     if (error.response == null) {
       yield put(meetingFailure('no response'));
     } else {
-      console.log(error);
       yield put(meetingFailure(error.response.headers.message));
     }
   }
@@ -85,18 +83,19 @@ function* handleMeetingAdd(meeting) {
   yield put(meetingFailure(null));
   if (result) {
     if( meeting.meeting.meetingScheduleId != 50) {
-
       let date = new Date(meeting.meeting.date.valueOf());
-      while ( date <= meeting.meeting.endDate) {
+
+      meeting.meeting.endDate.setHours(23,59,59,0);
+      while ( addDate(date,meeting.meeting)  <= meeting.meeting.endDate) {
           meeting.meeting = {...meeting.meeting,
             date: date,
             parentId: result.data.id
             };
-            date = addDate(date,meeting.meeting);
-          yield call(createMeetingAPI, meeting);  
+           yield call(createMeetingAPI, meeting);
         }
+      } else {
+        yield put(addMeeting(result.data));
       }    
-    yield put(addMeeting(result.data));
     yield put(meetingSuccess('succes'));
   } else {
     if (error.response == null) {
@@ -109,9 +108,8 @@ function* handleMeetingAdd(meeting) {
 }
 
 function* handleUpdateMeeting(newData) {
-  console.log(newData);
-  const { result, error } = yield call(updateMeetingAPI, newData);
   yield put(meetingLoading(true));  
+  const { result, error } = yield call(updateMeetingAPI, newData);
   if (result) {
     yield put(meetingSuccess("update"));
     yield put(updateMeeting(result)); 
@@ -127,9 +125,8 @@ function* handleUpdateMeeting(newData) {
 
 //update parent meeting a vsetky jeho children
 function* handleUpdateFamily(newData) {
-  console.log(newData);
-  const { result, error } = yield call(updateFamilyMeetingsAPI, newData);
   yield put(meetingLoading(true));  
+  const { result, error } = yield call(updateFamilyMeetingsAPI, newData);
   if (result) {
     yield put(meetingSuccess("update"));
     yield put(updateMeeting(newData)); 

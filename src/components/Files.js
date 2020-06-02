@@ -6,7 +6,7 @@ import { fileUpload, fileDownload,fileDelete } from "../uploadApi";
 
 function Files(props) {
 
-    const [file, setFile] = useState('');
+//    const [file, setFile] = useState('');
     const [ uploading, setUploading ] = useState(false);
     const [ uploadProgress, setUploadProgress ] = useState({});
     const entityStorageData = {
@@ -29,11 +29,11 @@ function Files(props) {
             console.log("done vsetky")
             setUploading(false)
         } catch (e) {
-            // Not Production ready! Do some error handling here instead...
+            
         }
         const addFile = { 
             index: props.infoFiles.length-1,
-            name: newFiles[0].name,
+            name: normalizeString(newFiles[0].name),
             size: newFiles[0].size,
             uploaded: true
         }
@@ -44,7 +44,6 @@ function Files(props) {
         return {
             onUploadProgress: function (progressEvent) {
                 var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-                console.log(percentCompleted);
                 setUploadProgress(percentCompleted);
             },
             headers: {
@@ -60,7 +59,6 @@ function Files(props) {
             await Promise.all(promises);
             console.log("done download")
         } catch (e) {
-            // Not Production ready! Do some error handling here instead...
         }
     };
 
@@ -89,7 +87,7 @@ function Files(props) {
         const formData = new FormData();
         const entityFileData = {
             index: index,
-            name: file.name,
+            name: normalizeString(file.name),
             size: file.size,
             uploaded: null
         }
@@ -107,9 +105,23 @@ function Files(props) {
     }
 
     const uploadFile = (file) => {
-        setFile(file);
-        uploadFiles(file);
+        let newFile = new File([file[0]], `${normalizeString(file[0].name)}`, { type: file[0].type });
+        uploadFiles([newFile]);
     }
+
+    const normalizeString = ( text ) => {
+            var accents    = 'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽžŤť';
+            var accentsOut = "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZzTt";
+            var str = text.split('');
+            var strLen = str.length;
+            var i, x;
+            for (i = 0; i < strLen; i++) {
+              if ((x = accents.indexOf(str[i])) != -1) {
+                str[i] = accentsOut[x];
+              }
+            }
+            return str.join('');
+    } 
 
   return (
     <div >
