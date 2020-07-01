@@ -80,12 +80,14 @@ const useStyles = makeStyles(theme => ({
 
   const ONLY_ONCE = 50;
   const INVITED = 30;
+  const PLANNING = 40;
+  const CANCELED = 41;
+  const TERMINATE = 42;
+  const CLOSED = 43;
+
   let waitForMail = false;
 
   function EditMeeting({ listenUpdateMeeting,listenUpdateFamily, listenClear,listenDeleteMeeting,listenAddMeeting,  ...props}) {
-
-
-    console.log(props.data);
 
     const classes = useStyles();    
 
@@ -129,24 +131,24 @@ const useStyles = makeStyles(theme => ({
         return statuses;
     }
   
-  const getMeetingStatuses = () => {
+  const getMeetingStatuses = () => { 
       var statuses = [];
       for(var i = 0 ; i < props.meetingState.length ; i++) {
-        if (props.data.meetingStatusId !== 40 && new Date() > props.data.date) {
-          if ( props.meetingState[i].id === 42 || props.meetingState[i].id === 43 ) {
+        if (props.data.meetingStatusId !== PLANNING && new Date() > props.data.date) {
+          if ( props.meetingState[i].id === TERMINATE || props.meetingState[i].id === CLOSED ) {
             statuses.push({
               value: props.meetingState[i].id,
               label: props.meetingState[i].status
               });
             }
           } else {
-            if ( props.data.meetingStatusId === 42 || props.data.meetingStatusId === 43 ) {
+            if ( props.data.meetingStatusId === TERMINATE || props.data.meetingStatusId === CLOSED ) {
                 statuses.push({
                   value: props.meetingState[i].id,
                   label: props.meetingState[i].status
                   });
             } else {
-              if (props.meetingState[i].id !== 43) {
+              if (props.meetingState[i].id !== CLOSED) {
               statuses.push({
                 value: props.meetingState[i].id,
                 label: props.meetingState[i].status
@@ -161,7 +163,6 @@ const useStyles = makeStyles(theme => ({
 
     const handleChangeSave = () => {
         if (updates) {
-          console.log("KKTINA");
           if ( updateOnetoEvery) {
               waitForMail = true;
               //z only one to every week/month
@@ -187,12 +188,12 @@ const useStyles = makeStyles(theme => ({
                 } else {
                   //every to every
                   waitForMail = true;
-                  delete props.data.id; 
                     listenDeleteMeeting({ id: props.data.id, delChildrens: true } );
                   let att = updates.attendants ? updates.attendants : props.data.attendants;
                   let prepareAtt = att.map(( attendant ) => {
                     return {userId: attendant.userId, attendantStatusId: INVITED }
                   });
+                  delete props.data.id; 
                   listenAddMeeting({
                     ...props.data,
                     ... updates,
@@ -224,7 +225,7 @@ const useStyles = makeStyles(theme => ({
       }
       if ( event.target.name === "meetingStatusId" ) {
         //cant anymore do changes
-        if ( (event.target.value ===  41 || event.target.value === 43) && new Date() > props.data.date) {
+        if ( (event.target.value ===  CANCELED || event.target.value === CLOSED) && new Date() > props.data.date) {
           setInfDialog(true);
           setShowUpdateDialog(true);
         }
@@ -252,7 +253,7 @@ const useStyles = makeStyles(theme => ({
       let att = [];
       usersToInvite.map(( user ) => {
         let status = props.data.attendants.find(( {userId} ) => userId === user.id)
-        att = [...att,{userId: user.id, attendantStatusId: status ? status.attendantStatusId : 30}];
+        att = [...att,{userId: user.id, attendantStatusId: status ? status.attendantStatusId : INVITED}];
       }
       );
       setUpdates({
@@ -354,7 +355,7 @@ const useStyles = makeStyles(theme => ({
                 onChange={handleOnChangeUpdate}
                 className={classes.textField} /> 
         </div>  
-        { props.data.meetingStatusId !== 40 && new Date() > props.data.date ? 
+        { props.data.meetingStatusId !== PLANNING && new Date() > props.data.date ? 
         <div className={classes.line}>
         <Typography variant="h6" className={classes.information} color='textSecondary'>
         Date  
@@ -384,7 +385,7 @@ const useStyles = makeStyles(theme => ({
         </MuiPickersUtilsProvider>
         </div> }
 
-           { props.data.meetingStatusId !== 40 && new Date() > props.data.date?
+           { props.data.meetingStatusId !== PLANNING && new Date() > props.data.date?
           <div className={classes.line}>
           <Typography variant="h6" className={classes.information} color='textSecondary'>
               Time 
@@ -412,7 +413,7 @@ const useStyles = makeStyles(theme => ({
                 />
         </MuiPickersUtilsProvider>
         </div>} 
-        {  props.data.meetingStatusId !== 40 && new Date() > props.data.date?  
+        {  props.data.meetingStatusId !== PLANNING && new Date() > props.data.date?  
         <div className={classes.line}>
             <Typography variant="h6" className={classes.information} color='textSecondary'>
             Place 
@@ -434,7 +435,7 @@ const useStyles = makeStyles(theme => ({
             inputProps={{maxLength: 20 }}
             /> 
         </div> }
-        { props.data.meetingStatusId !== 40 ?
+        { props.data.meetingStatusId !== PLANNING ?
          <div className={classes.line}>
          <Typography variant="h6" className={classes.information} color='textSecondary'>
          Repeat 
@@ -521,7 +522,7 @@ const useStyles = makeStyles(theme => ({
                 rightList={getRightList()} 
                 owner={props.data.userId} />
         </div>
-        { waitForMail ?
+        { waitForMail || props.loading ?
             <div style={{ marginLeft: 200 }}>
                <CircularProgress 
             className={classes.proccess}
